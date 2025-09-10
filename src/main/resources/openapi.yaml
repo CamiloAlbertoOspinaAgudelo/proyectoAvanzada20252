@@ -1,0 +1,1098 @@
+openapi: 3.0.0
+info:
+  title: Alojamiento
+  version: 1.0.12
+  description: |
+    API para gestión de alojamientos, reservas y comentarios, con roles de usuario y anfitrión.
+    
+    Tecnologías objetivo: Spring Boot (JPA), Angular, MariaDB.
+    - [Proyecto](https://caflorezvi.github.io/guias-programacion-avanzada/0.proyecto-final.html)
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: Users
+  - name: Accommodations
+  - name: Reservations
+  - name: Reviews
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Registro de usuario o anfitrión
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSummary'
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409':
+          description: Email ya registrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Iniciar sesión y obtener JWT
+      operationId: userLogin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Token emitido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Credenciales inválidas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/recover:
+    post:
+      tags:
+        - Authentication
+      summary: Solicitar código de recuperación de contraseña
+      operationId: recoverPassword
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasswordResetRequest' }
+      responses:
+        '204':
+          description: Código enviado si email existe (no revelar existencia)
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /auth/reset:
+    post:
+      tags:
+        - Authentication
+      summary: Restablecer contraseña con código vigente
+      operationId: resetPassword
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasswordResetConfirm' }
+      responses:
+        '204':
+          description: Contraseña actualizada
+        '400':
+          description: Token inválido o expirado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/{id}:
+    get:
+      tags:
+        - Users
+      summary: Obtener perfil del usuario autenticado
+      operationId: userProfile
+      security:
+        - BearerAuth: [ ]
+      responses:
+        '200':
+          description: Perfil
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserProfile' }
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Users
+      summary: Actualizar perfil de usuario
+      operationId: updateProfile
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UserProfileUpdate' }
+      responses:
+        '200':
+          description: Perfil actualizado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserProfile' }
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/{id}/password:
+    patch:
+      tags:
+        - Users
+      summary: Cambiar contraseña
+      operationId: changePassword
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PasswordChangeRequest' }
+      responses:
+        '204':
+          description: Contraseña actualizada
+        '400':
+          description: Actual inválida o nueva no cumple política
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations:
+    get:
+      tags:
+        - Accommodations
+      summary: Buscar alojamientos
+      operationId: searchAccommodations
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - in: query
+          name: city
+          schema: { type: string }
+          description: Ciudad
+        - in: query
+          name: from
+          schema: { type: string, format: date }
+          description: Fecha check-in (opcional)
+        - in: query
+          name: to
+          schema: { type: string, format: date }
+          description: Fecha check-out (opcional)
+        - in: query
+          name: priceMin
+          schema: { type: number, format: double, minimum: 0 }
+        - in: query
+          name: priceMax
+          schema: { type: number, format: double, minimum: 0 }
+        - in: query
+          name: services
+          schema:
+            type: array
+            items: { type: string }
+          style: form
+          explode: false
+          description: Lista de servicios (wifi,piscina,mascotas,...)
+      responses:
+        '200':
+          description: Lista paginada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedAccommodationList' }
+        '404':
+          description: Usuario no encontrado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - Accommodations
+      summary: Crear alojamiento
+      operationId: createAccommodations
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AccommodationCreate' }
+      responses:
+        '201':
+          description: Creado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Accommodation' }
+        '403':
+          description: Requiere rol HOST
+          content:
+            application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations/{id}:
+    get:
+      tags:
+        - Accommodations
+      summary: Detalle de alojamiento
+      operationId: accommodationDetails
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AccommodationDetail' }
+        '404': { description: No encontrado }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      tags:
+        - Accommodations
+      summary: Editar alojamiento
+      operationId: editAccommodations
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AccommodationUpdate' }
+      responses:
+        '200': { description: Actualizado, content: { application/json: { schema: { $ref: '#/components/schemas/Accommodation' } } } }
+        '403': { description: No autorizado }
+        '404': { description: No encontrado }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      tags:
+        - Accommodations
+      summary: Eliminar alojamiento
+      operationId: eraseAccommodations
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      responses:
+        '200': { description: Marcado como DELETED }
+        '400': { description: Tiene reservas futuras, no se puede eliminar, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+        '403': { description: No autorizado }
+        '404': { description: No encontrado }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations/{id}/images:
+    post:
+      tags:
+        - Accommodations
+      summary: Subir imágenes
+      operationId: postImages
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items: { type: string, format: binary }
+                primaryIndex:
+                  type: integer
+                  minimum: 0
+              required: [files]
+      responses:
+        '201': { description: Imágenes agregadas, content: { application/json: { schema: { $ref: '#/components/schemas/ImageList' } } } }
+        '400': { description: Límite de imágenes excedido }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations/{id}/images/{imageId}:
+    delete:
+      tags:
+        - Accommodations
+      summary: Eliminar imagen específica
+      operationId: deleteImages
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+        - name: imageId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '204': { description: Eliminada }
+        '404': { description: No encontrada }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reservations:
+    get:
+      tags:
+        - Reservations
+      summary: Listar reservas del usuario o del anfitrión
+      operationId: reservationsList
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+        - $ref: '#/components/parameters/SortParam'
+        - in: query
+          name: scope
+          schema: { type: string, enum: [USER, HOST] }
+          description: Si el usuario es HOST, permite ver reservas de sus alojamientos
+        - in: query
+          name: status
+          schema: { type: string, enum: [PENDING, CONFIRMED, CANCELLED, COMPLETED] }
+        - in: query
+          name: from
+          schema: { type: string, format: date }
+        - in: query
+          name: to
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Lista paginada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedReservationList' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      tags:
+        - Reservations
+      summary: Crear reserva
+      operationId: createReservation
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReservationCreate' }
+      responses:
+        '201':
+          description: Creada (PENDING o CONFIRMED según configuración)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reservation' }
+        '400': { description: Regla violada, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reservations/{id}:
+    get:
+      tags:
+        - Reservations
+      summary: Obtener detalle de reserva
+      operationId: reservationDetails
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/ReservationIdPath'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/Reservation' } } } }
+        '404': { description: No encontrada }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reservations/{id}/status:
+    patch:
+      tags:
+        - Reservations
+      summary: Cancelar reserva
+      operationId: cancelReservation
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - $ref: '#/components/parameters/ReservationIdPath'
+      responses:
+        '200':
+          description: Cancelada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Reservation' }
+        '400': { description: Fuera de ventana de cancelación, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+        '403': { description: No autorizado }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations/{id}/reviews:
+    get:
+      tags:
+        - Reviews
+      summary: Listar comentarios del alojamiento
+      operationId: listReviews
+      parameters:
+        - $ref: '#/components/parameters/IdPath'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: Lista paginada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PagedReviewList' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reviews:
+    post:
+      tags:
+        - Reviews
+      summary: Crear comentario
+      operationId: review
+      security:
+        - BearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ReviewCreate' }
+      responses:
+        '201': { description: Creado, content: { application/json: { schema: { $ref: '#/components/schemas/Review' } } } }
+        '400': { description: Reserva no completada o review ya existe, content: { application/json: { schema: { $ref: '#/components/schemas/ErrorResponse' } } } }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /reviews/{id}/response:
+    post:
+      tags:
+        - Reviews
+      summary: Respuesta del anfitrión al comentario
+      operationId: reply
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                response:
+                  type: string
+                  maxLength: 500
+              required: [response]
+      responses:
+        '200': { description: Actualizado, content: { application/json: { schema: { $ref: '#/components/schemas/Review' } } } }
+        '403': { description: No autorizado }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /users/{id}/accommodations:
+    get:
+      tags:
+        - Users
+      operationId: showAccomodations
+      security:
+        - BearerAuth: [ ]
+      summary: Listar alojamientos del anfitrión autenticado
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/PagedAccommodationList' } } } }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /accommodations/{id}/metrics:
+    get:
+      tags:
+        - Accommodations
+      summary: Métricas por alojamiento y rango de fechas
+      operationId: showAccomodations
+      security:
+        - BearerAuth: [ ]
+      parameters:
+        - in: query
+          name: accommodationId
+          required: true
+          schema: { type: integer, format: int64 }
+        - in: query
+          name: from
+          required: true
+          schema: { type: string, format: date }
+        - in: query
+          name: to
+          required: true
+          schema: { type: string, format: date }
+      responses:
+        '200':
+          description: Métricas calculadas
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/HostMetrics' }
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '503':
+          description: Service NOT available
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    IdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64 } # int para facilitar la incrementacion
+    ReservationIdPath:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer, format: int64 }
+    PageParam:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 0, default: 0 }  # 0 en caso de no haber, si no deberia ser 1
+    SizeParam:
+      name: size
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 10, default: 10 }
+    SortParam:
+      name: sort
+      in: query
+      schema: { type: string }
+      description: Campo y dirección. Ejemplo `price_per_night,asc`
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status: { type: integer }
+        title: { type: string }
+        detail: { type: string }
+        timestamp: { type: string, format: date-time }
+      required: [status, title]
+
+    UserSummary:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        name: { type: string }
+        email: { type: string, format: email }
+        role: { type: string, enum: [User, Host] }
+      required: [id, name, email, role]
+
+    UserRegisterRequest:
+      type: object
+      properties:
+        name: { type: string, maxLength: 100 }
+        email: { type: string, format: email }
+        password: { type: string, format: password, minLength: 8, pattern: "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).*$" }
+        phone: { type: string }
+        role: { type: string, enum: [User, Host] }
+        birthDate: { type: string, format: date }
+      required: [name, email, password, phone, role, birthDate]
+
+    LoginRequest:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+      required: [email, password]
+
+    LoginResponse:
+      type: object
+      properties:
+        accessToken: { type: string }
+        tokenType: { type: string, example: 'Bearer' }
+        expiresIn: { type: integer, example: 3600 }
+        user: { $ref: '#/components/schemas/UserSummary' }
+      required: [accessToken, tokenType, user]
+
+    PasswordResetRequest:
+      type: object
+      properties:
+        email: { type: string, format: email }
+      required: [email]
+
+    PasswordResetConfirm:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        code: { type: string, description: 'Código de 6 caracteres' }
+        newPassword: { type: string, format: password, minLength: 8, pattern: "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z]).*$" }
+      required: [email, code, newPassword]
+
+    PasswordChangeRequest:
+      type: object
+      properties:
+        currentPassword: { type: string, format: password }
+        newPassword: { type: string, format: password, minLength: 8 }
+      required: [currentPassword, newPassword]
+
+    HostProfile:
+      type: object
+      properties:
+        description: { type: string, maxLength: 1000 }
+        documentsMeta: { type: object, additionalProperties: { type: string } }
+
+    UserProfile:
+      allOf:
+        - $ref: '#/components/schemas/UserSummary'
+        - type: object
+          properties:
+            phone: { type: string }
+            birthDate: { type: string, format: date }
+            photoUrl: { type: string, format: uri }
+            hostProfile: { $ref: '#/components/schemas/HostProfile' }
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        phone: { type: string }
+        photoUrl: { type: string, format: uri }
+        hostProfile: { $ref: '#/components/schemas/HostProfile' }
+
+    AccommodationStatus:
+      type: string
+      enum: [ACTIVE, DELETED]
+
+    Image:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        url: { type: string, format: uri }
+        order: { type: integer, minimum: 0 }
+        primary: { type: boolean }
+      required: [id, url]
+
+    ImageList:
+      type: array
+      items: { $ref: '#/components/schemas/Image' }
+
+    AccommodationBase:
+      type: object
+      properties:
+        title: { type: string }
+        description: { type: string, maxLength: 4000 }
+        city: { type: string }
+        address: { type: string }
+        lat: { type: number, format: double }
+        lng: { type: number, format: double }
+        pricePerNight: { type: number, format: double, minimum: 0 }
+        capacity: { type: integer, minimum: 1 }
+        services:
+          type: array
+          items: { type: string }
+      required: [title, description, city, address, lat, lng, pricePerNight, capacity]
+
+    AccommodationCreate:
+      allOf:
+        - $ref: '#/components/schemas/AccommodationBase'
+        - type: object
+          properties:
+            images:
+              $ref: '#/components/schemas/ImageList'
+
+    AccommodationUpdate:
+      allOf:
+        - $ref: '#/components/schemas/AccommodationBase'
+        - type: object
+          properties:
+            status: { $ref: '#/components/schemas/AccommodationStatus' }
+
+    Accommodation:
+      allOf:
+        - $ref: '#/components/schemas/AccommodationBase'
+        - type: object
+          properties:
+            id: { type: integer, format: int64 }
+            hostId: { type: integer, format: int64 }
+            status: { $ref: '#/components/schemas/AccommodationStatus' }
+            mainImageUrl: { type: string, format: uri }
+            images: { $ref: '#/components/schemas/ImageList' }
+            ratingAverage: { type: number, format: double, minimum: 0, maximum: 5 }
+            createdAt: { type: string, format: date-time }
+          required: [id, hostId, status, createdAt]
+
+    AvailabilityDay:
+      type: object
+      properties:
+        date: { type: string, format: date }
+        available: { type: boolean }
+
+    AccommodationDetail:
+      allOf:
+        - $ref: '#/components/schemas/Accommodation'
+        - type: object
+          properties:
+            availability:
+              type: array
+              items: { $ref: '#/components/schemas/AvailabilityDay' }
+            reviewsSummary:
+              type: object
+              properties:
+                average: { type: number, format: double }
+                total: { type: integer }
+
+    ReservationStatus:
+      type: string
+      enum: [PENDING, CONFIRMED, CANCELLED, COMPLETED]
+
+    ReservationBase:
+      type: object
+      properties:
+        accommodationId: { type: integer, format: int64 }
+        checkin: { type: string, format: date }
+        checkout: { type: string, format: date }
+        guests: { type: integer, minimum: 1 }
+      required: [accommodationId, checkin, checkout, guests]
+
+    ReservationCreate:
+      allOf:
+        - $ref: '#/components/schemas/ReservationBase'
+
+    Reservation:
+      allOf:
+        - $ref: '#/components/schemas/ReservationBase'
+        - type: object
+          properties:
+            id: { type: integer, format: int64 }
+            userId: { type: integer, format: int64 }
+            status: { $ref: '#/components/schemas/ReservationStatus' }
+            totalPrice: { type: number, format: double }
+            createdAt: { type: string, format: date-time }
+          required: [id, userId, status, createdAt]
+
+    Review:
+      type: object
+      properties:
+        id: { type: integer, format: int64 }
+        reservationId: { type: integer, format: int64 }
+        userId: { type: integer, format: int64 }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        comment: { type: string, maxLength: 500 }
+        hostResponse: { type: string, maxLength: 500, nullable: true }
+        createdAt: { type: string, format: date-time }
+      required: [id, reservationId, userId, rating, comment, createdAt]
+
+    ReviewCreate:
+      type: object
+      properties:
+        reservationId: { type: integer, format: int64 }
+        rating: { type: integer, minimum: 1, maximum: 5 }
+        comment: { type: string, maxLength: 500 }
+      required: [reservationId, rating, comment]
+
+    HostMetrics:
+      type: object
+      properties:
+        accommodationId: { type: integer, format: int64 }
+        from: { type: string, format: date }
+        to: { type: string, format: date }
+        reservationsCount: { type: integer }
+        averageRating: { type: number, format: double, minimum: 0, maximum: 5 }
+        occupancyRate: { type: number, format: double }
+
+    PageMetadata:
+      type: object
+      properties:
+        page: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer }
+        totalPages: { type: integer }
+
+    PagedAccommodationList:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/Accommodation' }
+        page: { $ref: '#/components/schemas/PageMetadata' }
+
+    PagedReservationList:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/Reservation' }
+        page: { $ref: '#/components/schemas/PageMetadata' }
+
+    PagedReviewList:
+      type: object
+      properties:
+        content:
+          type: array
+          items: { $ref: '#/components/schemas/Review' }
+        page: { $ref: '#/components/schemas/PageMetadata' }
