@@ -1,9 +1,9 @@
 package co.edu.uniquindio.application.controllers;
 
-import co.edu.uniquindio.application.dto.CreateHostDTO;
-import co.edu.uniquindio.application.dto.CreateUserDTO;
-import co.edu.uniquindio.application.dto.EditUserDTO;
-import co.edu.uniquindio.application.dto.UserDTO;
+import co.edu.uniquindio.application.dto.*;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,24 +13,32 @@ import java.util.List;
 public class UserController {
 
     @PostMapping
-    public void create(CreateUserDTO userDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> create(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
 
     @PutMapping
-    public void edit(EditUserDTO userDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(String id) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> delete(@PathVariable String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido eliminado"));
     }
 
     @GetMapping("/{id}")
-    public UserDTO get(String id) throws Exception{
-        return null;
+    public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 
     @PostMapping("/host")
-    public void createHost(CreateHostDTO hostDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> createHost(@Valid @RequestBody CreateHostDTO hostDTO) throws Exception{
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
+    }
 
+    @GetMapping("/{id}/accommodations")
+    public ResponseEntity<ResponseDTO<HostDTO>> getAccommodations(@PathVariable String id) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 }
