@@ -7,10 +7,7 @@ import org.hibernate.validator.constraints.Length;
 public record EditAccommodationDTO(
         @NotBlank String title,
         @Length(max = 300) String description,
-        @NotBlank String city,
-        @NotBlank String address,
-        @NotNull double lat,
-        @NotNull double lng,
+        @NotNull AddressDTO address,
         @NotNull double priceNight,
         @NotNull int capMax,
         @Length(max = 200) String services

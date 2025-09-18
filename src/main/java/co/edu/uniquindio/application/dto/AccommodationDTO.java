@@ -3,10 +3,7 @@ package co.edu.uniquindio.application.dto;
 public record AccommodationDTO(
         String title,
         String description,
-        String city,
-        String address,
-        double lat,
-        double lng,
+        AddressDTO address,
         String PriceNight,
         int capMax,
         String services,
