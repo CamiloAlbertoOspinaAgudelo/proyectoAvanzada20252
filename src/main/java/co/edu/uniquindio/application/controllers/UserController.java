@@ -17,7 +17,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
     }
