@@ -6,16 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
-
-    @PostMapping
-    public ResponseEntity<ResponseDTO<String>> create(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
-    }
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
@@ -40,5 +36,14 @@ public class UserController {
     @GetMapping("/{id}/accommodations")
     public ResponseEntity<ResponseDTO<HostDTO>> getAccommodations(@PathVariable String id) throws Exception{
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
+    }
+
+    @GetMapping("/{id}/accomodations/reserves")
+    public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listReserves(
+            @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
+            @RequestParam(required = false) String city, @RequestParam(required = false) String status,
+            @RequestParam(required = false) String checkIn, @RequestParam(required = false) String checkOut) throws Exception {
+        List<ReserveDTO> list = new ArrayList<>();
+        return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 }

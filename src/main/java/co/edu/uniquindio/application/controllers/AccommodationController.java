@@ -67,7 +67,7 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 
-    //obtener comentarios del alojamiento ****confirmar****
+    //obtener comentarios del alojamiento
     @GetMapping("/{id}/reviews")
     public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable String id) throws Exception{
         return ResponseEntity.ok(new ResponseDTO<>(false, null));

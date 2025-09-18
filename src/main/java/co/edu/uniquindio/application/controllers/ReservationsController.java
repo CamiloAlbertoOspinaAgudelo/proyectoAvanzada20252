@@ -24,7 +24,7 @@ public class ReservationsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "La reserva ha sido creada"));
     }
 
-    //obtener reservas de usuario  ****preguntar para revision de alojamientos de host****
+    //obtener reservas de usuario
     @GetMapping
     public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listAll(
             @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
