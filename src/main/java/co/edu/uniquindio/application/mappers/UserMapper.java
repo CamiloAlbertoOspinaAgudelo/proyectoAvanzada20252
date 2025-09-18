@@ -1,8 +1,8 @@
 package co.edu.uniquindio.application.mappers;
 
 
-import co.edu.uniquindio.application.dto.CreateUserDTO;
-import co.edu.uniquindio.application.dto.UserDTO;
+import co.edu.uniquindio.application.dto.user.CreateUserDTO;
+import co.edu.uniquindio.application.dto.user.UserDTO;
 import co.edu.uniquindio.application.model.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,4 +1,4 @@
-package co.edu.uniquindio.application.dto;
+package co.edu.uniquindio.application.dto.booking;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

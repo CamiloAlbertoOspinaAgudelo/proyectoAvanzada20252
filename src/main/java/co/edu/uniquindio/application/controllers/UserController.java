@@ -1,6 +1,11 @@
 package co.edu.uniquindio.application.controllers;
 
-import co.edu.uniquindio.application.dto.*;
+import co.edu.uniquindio.application.dto.booking.ReserveDTO;
+import co.edu.uniquindio.application.dto.review.ResponseDTO;
+import co.edu.uniquindio.application.dto.user.CreateHostDTO;
+import co.edu.uniquindio.application.dto.user.EditUserDTO;
+import co.edu.uniquindio.application.dto.user.HostDTO;
+import co.edu.uniquindio.application.dto.user.UserDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

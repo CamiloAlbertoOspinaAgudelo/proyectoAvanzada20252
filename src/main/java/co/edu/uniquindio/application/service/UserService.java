@@ -1,7 +1,7 @@
 package co.edu.uniquindio.application.service;
 
-import co.edu.uniquindio.application.dto.CreateUserDTO;
-import co.edu.uniquindio.application.dto.UserDTO;
+import co.edu.uniquindio.application.dto.user.CreateUserDTO;
+import co.edu.uniquindio.application.dto.user.UserDTO;
 
 public interface UserService {
 

@@ -1,4 +1,4 @@
-package co.edu.uniquindio.application.dto;
+package co.edu.uniquindio.application.dto.exception;
 
 public record ValidationDTO<T>(
         String field,

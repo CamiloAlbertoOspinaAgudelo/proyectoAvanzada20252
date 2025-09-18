@@ -1,4 +1,4 @@
-package co.edu.uniquindio.application.dto;
+package co.edu.uniquindio.application.dto.review;
 
 public record ReviewDTO(
         int reservationId,
