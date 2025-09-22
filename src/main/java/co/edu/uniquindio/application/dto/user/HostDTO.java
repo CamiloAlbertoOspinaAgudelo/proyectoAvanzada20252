@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record HostDTO(
+        String id,
         String name,
         String email,
         Rol rol,
