@@ -3,7 +3,7 @@ package co.edu.uniquindio.application.controllers;
 
 import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
-import co.edu.uniquindio.application.dto.review.ResponseDTO;
+import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -4,9 +4,11 @@ package co.edu.uniquindio.application.controllers;
 import co.edu.uniquindio.application.dto.auth.LogInDTO;
 import co.edu.uniquindio.application.dto.auth.RecoverDTO;
 import co.edu.uniquindio.application.dto.auth.ResetDTO;
-import co.edu.uniquindio.application.dto.review.ResponseDTO;
+import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
+import co.edu.uniquindio.application.service.interfaces.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,11 +18,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthController {
+
+    private final UserService userService;
 
     //register
     @PostMapping("/register")
-    public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO createUserDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> register(@Valid @RequestBody CreateUserDTO userDTO) throws Exception{
+        userService.create(userDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "El registro ha sido exitoso"));
     }
 

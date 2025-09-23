@@ -1,6 +1,6 @@
 package co.edu.uniquindio.application.exceptions;
 
-import co.edu.uniquindio.application.dto.review.ResponseDTO;
+import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.exception.ValidationDTO;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;

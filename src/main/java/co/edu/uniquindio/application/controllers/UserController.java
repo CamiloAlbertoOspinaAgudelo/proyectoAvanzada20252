@@ -1,12 +1,14 @@
 package co.edu.uniquindio.application.controllers;
 
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
-import co.edu.uniquindio.application.dto.review.ResponseDTO;
+import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.user.CreateHostDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.HostDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
+import co.edu.uniquindio.application.service.interfaces.UserService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
+
+    private final UserService userService;
 
     @PutMapping("/{id}")
     public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
@@ -30,7 +35,8 @@ public class UserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable String id) throws Exception{
-        return ResponseEntity.ok(new ResponseDTO<>(false, null));
+        UserDTO userDTO = userService.get(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
     }
 
     @PostMapping("/host")

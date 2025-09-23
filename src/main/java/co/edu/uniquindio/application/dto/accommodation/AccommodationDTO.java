@@ -1,6 +1,7 @@
 package co.edu.uniquindio.application.dto.accommodation;
 
 public record AccommodationDTO(
+        String id,
         String title,
         String description,
         AddressDTO address,

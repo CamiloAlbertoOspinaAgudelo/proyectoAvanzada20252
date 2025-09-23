@@ -9,6 +9,7 @@ public record UserDTO(
         String name,
         String email,
         Rol rol,
+        String password,
         String phone,
         LocalDate dateBirth,
         String photoUrl
