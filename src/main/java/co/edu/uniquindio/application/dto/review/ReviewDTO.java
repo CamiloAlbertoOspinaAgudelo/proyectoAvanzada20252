@@ -1,8 +1,11 @@
 package co.edu.uniquindio.application.dto.review;
 
+import java.time.LocalDateTime;
+
 public record ReviewDTO(
-        String reservationId,
+        String id,
         int rating,
-        String comment
+        String comment,
+        LocalDateTime date
 ) {
 }

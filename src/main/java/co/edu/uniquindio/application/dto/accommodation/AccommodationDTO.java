@@ -1,5 +1,9 @@
 package co.edu.uniquindio.application.dto.accommodation;
 
+import co.edu.uniquindio.application.model.enums.Service;
+
+import java.util.List;
+
 public record AccommodationDTO(
         String id,
         String title,
@@ -7,16 +11,7 @@ public record AccommodationDTO(
         AddressDTO address,
         String PriceNight,
         int capMax,
-        String services,
-        String photoUrl1,
-        String photoUrl2,
-        String photoUrl3,
-        String photoUrl4,
-        String photoUrl5,
-        String photoUrl6,
-        String photoUrl7,
-        String photoUrl8,
-        String photoUrl9,
-        String photoUrl10
+        List<Service> services,
+        List<String> photoUrls
 ) {
 }

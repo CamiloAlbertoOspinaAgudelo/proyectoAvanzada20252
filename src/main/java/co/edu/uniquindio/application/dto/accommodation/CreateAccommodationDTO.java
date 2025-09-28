@@ -1,16 +1,20 @@
 package co.edu.uniquindio.application.dto.accommodation;
 
+import co.edu.uniquindio.application.model.enums.Service;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.List;
 
 public record CreateAccommodationDTO(
         @NotBlank String title,
         @Length(max = 300) String description,
         @NotNull AddressDTO address,
         @NotNull double priceNight,
-        @NotNull int capMax,
-        @Length(max = 200) String services,
-        @NotBlank @Length(max = 300) String photoUrl1
+        @NotNull @Min(1) int capMax,
+        List<Service> services,
+        List<String> photoUrls
 ) {
 }

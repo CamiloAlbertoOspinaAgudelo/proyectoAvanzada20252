@@ -4,7 +4,9 @@ package co.edu.uniquindio.application.controllers;
 import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
+import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +16,15 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/reservations")
+@RequiredArgsConstructor
 public class ReservationsController {
+
+    private final ReserveService reserveService;
 
     //crear reserva
     @PostMapping
     public ResponseEntity<ResponseDTO<String>> create(@Valid @RequestBody CreateReserveDTO reserveDTO) throws Exception{
+        reserveService.create(reserveDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "La reserva ha sido creada"));
     }
 
@@ -28,7 +34,7 @@ public class ReservationsController {
             @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
             @RequestParam(required = false) String city, @RequestParam(required = false) /*ReserveStatus*/String status,
             @RequestParam(required = false) /*LocalDateTime*/String checkIn, @RequestParam(required = false) /*LocalDateTime*/String checkOut) throws Exception {
-        List<ReserveDTO> list = new ArrayList<>();
+        List<ReserveDTO> list = reserveService.listAll();
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 

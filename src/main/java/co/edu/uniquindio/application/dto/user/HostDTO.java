@@ -1,5 +1,6 @@
 package co.edu.uniquindio.application.dto.user;
 
+import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.model.enums.Rol;
 
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ public record HostDTO(
         LocalDate dateBirth,
         String photoUrl,
         String description,
-        List<String> documents
+        List<String> documents,
+        List<AccommodationDTO> accommodations
 ) {
 }

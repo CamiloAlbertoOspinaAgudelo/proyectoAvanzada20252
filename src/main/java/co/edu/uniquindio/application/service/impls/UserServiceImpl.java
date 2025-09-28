@@ -1,11 +1,11 @@
-package co.edu.uniquindio.application.service.impliments;
+package co.edu.uniquindio.application.service.impls;
 
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
+import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.UserMapper;
 import co.edu.uniquindio.application.model.entity.User;
-import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -31,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public void create(CreateUserDTO userDTO) throws Exception{
         //Validación para verificar si el email ya está en uso
         if(emailExist(userDTO.email())){
-            throw new Exception("El correo electrónico ya está en uso.");
+            throw new ValueConflictException("El correo electrónico ya está en uso.");
         }
 
         // Transformación del DTO a User
