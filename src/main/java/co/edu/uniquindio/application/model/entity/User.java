@@ -3,26 +3,39 @@ package co.edu.uniquindio.application.model.entity;
 
 import co.edu.uniquindio.application.model.enums.Rol;
 import co.edu.uniquindio.application.model.enums.Status;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Entity
 public class User {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
+    @Column(nullable = false, length = 100)
     private String name;
+    @Column(unique = true, nullable = false)
     private String email;
+    @Column(nullable = false, length = 200)
     private String password;
-    private Status status;
-    private Rol rol;
+    @ElementCollection
+    private Set<Status> status;
+    @ElementCollection
+    private Set<Rol> rol;
+    @Column(length = 10)
     private String phone;
+    @Column(nullable = false)
     private LocalDate dateBirth;
+    @Column(length = 200)
     private String photoUrl;
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 }

@@ -10,6 +10,7 @@ import co.edu.uniquindio.application.mappers.AddressMapper;
 import co.edu.uniquindio.application.model.entity.Accommodation;
 import co.edu.uniquindio.application.model.entity.Address;
 import co.edu.uniquindio.application.model.entity.Review;
+import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.AccommodationRepository;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +74,7 @@ public class AccommodationServiceImpl implements AccommodationService {
             throw new Exception("Alojamiento no encontrado.");
         }
 
-        placeStore.remove(id);
+        place.setStatus(Status.INACTIVE);
     }
 
     @Override

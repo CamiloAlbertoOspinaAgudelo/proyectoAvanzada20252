@@ -6,6 +6,7 @@ import co.edu.uniquindio.application.dto.user.UserDTO;
 import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.UserMapper;
 import co.edu.uniquindio.application.model.entity.User;
+import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
@@ -63,7 +64,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Eliminación del usuario
-        userStore.remove(id);
+        user.setStatus(Status.INACTIVE);
     }
 
     @Override

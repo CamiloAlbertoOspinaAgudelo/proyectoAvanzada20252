@@ -41,12 +41,14 @@ public class ReservationsController {
     //obtener detalle reserva
     @GetMapping("/{id}")
     public ResponseEntity<ResponseDTO<ReserveDTO>> get(@PathVariable String id) throws Exception{
-        return ResponseEntity.ok(new ResponseDTO<>(false, null));
+        ReserveDTO reserveDTO = reserveService.get(id);
+        return ResponseEntity.ok(new ResponseDTO<>(false, reserveDTO));
     }
 
     //eliminarReserva
     @PatchMapping("/{id}/status")
     public ResponseEntity<ResponseDTO<String>> cancel(@PathVariable String id) throws Exception{
+        reserveService.cancel(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, "La reserva ha sido cancelada"));
     }
 }
