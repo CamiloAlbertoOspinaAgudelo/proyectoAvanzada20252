@@ -78,14 +78,14 @@ public class AccommodationController {
     //obtener metricas
     @GetMapping("/{id}/metrics")
     public ResponseEntity<ResponseDTO<AccommodationDTO>> getMetric(@PathVariable String id, @Valid @RequestBody LocalDate to, @Valid @RequestBody LocalDate from) throws Exception{
-        accommodationService.getMetrics(id, from, to);
+//        accommodationService.getMetrics(id, from, to);
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 
     //obtener comentarios del alojamiento
     @GetMapping("/{id}/reviews")
     public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable String id) throws Exception{
-        accommodationService.getReviews(id);
+//        accommodationService.getReviews(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 }

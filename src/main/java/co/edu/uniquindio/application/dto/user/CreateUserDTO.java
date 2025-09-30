@@ -1,6 +1,8 @@
 package co.edu.uniquindio.application.dto.user;
 
 import java.time.LocalDate;
+import java.util.Set;
+
 import co.edu.uniquindio.application.model.enums.Rol;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -15,6 +17,6 @@ public record CreateUserDTO (
         @NotBlank @Length(min = 8) String password,
         @Length(max = 300) String photoUrl,
         @NotNull @Past LocalDate dateBirth,
-        @NotNull Rol rol
+        @NotNull Set<Rol> rol
 ) {
 }

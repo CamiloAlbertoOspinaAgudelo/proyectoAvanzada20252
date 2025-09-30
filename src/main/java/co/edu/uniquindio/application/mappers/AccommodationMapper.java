@@ -12,7 +12,6 @@ import org.mapstruct.MappingConstants;
 public interface AccommodationMapper {
     @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
     @Mapping(target = "status", constant = "ACTIVE")
-    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
 
     Accommodation toEntity(CreateAccommodationDTO accommodationDTO);
 

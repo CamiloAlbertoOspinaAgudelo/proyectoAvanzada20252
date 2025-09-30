@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private final Map<String, User> userStore = new ConcurrentHashMap<>();
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void create(CreateUserDTO userDTO) throws Exception{
@@ -63,8 +63,11 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Usuario no encontrado.");
         }
 
+        Set<Status> statuses = null;
+        statuses.add(Status.INACTIVE);
+
         // Eliminación del usuario
-        user.setStatus(Status.INACTIVE);
+        user.setStatus(statuses);
     }
 
     @Override
@@ -94,10 +97,10 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Usuario no encontrado.");
         }
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new Exception("Usuario no encontrado.");
-        }
-        user.setPassword(passwordEncoder.encode(newPassword));
+//        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+//            throw new Exception("Usuario no encontrado.");
+//        }
+//        user.setPassword(passwordEncoder.encode(newPassword));
 
     }
 

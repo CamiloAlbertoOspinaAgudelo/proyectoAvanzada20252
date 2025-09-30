@@ -124,50 +124,50 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     }
 
-    @Override
-    public String getMetrics(String id, LocalDate from, LocalDate to) throws Exception{
-        Accommodation place = placeStore.get(id);
-
-        if (place == null) {
-            throw new Exception("Alojamiento no encontrado.");
-        }
-
-        long totalReservas = place.getReservations().stream()
-                .filter(r -> !r.getDate().isBefore(from) && !r.getDate().isAfter(to))
-                .count();
-
-        List<Review> reviews = place.getReviews().stream()
-                .filter(r -> !r.getDate().isBefore(from) && !r.getDate().isAfter(to))
-                .toList();
-
-        double promedioCalificaciones = reviews.isEmpty()
-                ? 0.0
-                : reviews.stream().mapToDouble(Review::getScore).average().orElse(0.0);
-
-        return ("Número de reservas: " + totalReservas + "Promedio de calificaciones: " + promedioCalificaciones);
-    }
-
-    @Override
-    public List<ReviewDTO> getReviews(String id) throws Exception{
-        Accommodation place = placeStore.get(id);
-
-        if (place == null) {
-            throw new Exception("Alojamiento no encontrado.");
-        }
-
-        // Obtener reseñas
-        List<Review> reviews = place.getReviews();
-
-        // Mapear a DTO
-        return reviews.stream()
-                .map(r -> new ReviewDTO(
-                        r.getId(),
-                        r.getUserId(),
-                        r.getScore(),
-                        r.getComment(),
-                        r.getDate()
-                ))
-                .toList();
-    }
+//    @Override
+//    public String getMetrics(String id, LocalDate from, LocalDate to) throws Exception{
+//        Accommodation place = placeStore.get(id);
+//
+//        if (place == null) {
+//            throw new Exception("Alojamiento no encontrado.");
+//        }
+//
+//        long totalReservas = place.getReservations().stream()
+//                .filter(r -> !r.getDate().isBefore(from) && !r.getDate().isAfter(to))
+//                .count();
+//
+//        List<Review> reviews = place.getReviews().stream()
+//                .filter(r -> !r.getDate().isBefore(from) && !r.getDate().isAfter(to))
+//                .toList();
+//
+//        double promedioCalificaciones = reviews.isEmpty()
+//                ? 0.0
+//                : reviews.stream().mapToDouble(Review::getScore).average().orElse(0.0);
+//
+//        return ("Número de reservas: " + totalReservas + "Promedio de calificaciones: " + promedioCalificaciones);
+//    }
+//
+//    @Override
+//    public List<ReviewDTO> getReviews(String id) throws Exception{
+//        Accommodation place = placeStore.get(id);
+//
+//        if (place == null) {
+//            throw new Exception("Alojamiento no encontrado.");
+//        }
+//
+//        // Obtener reseñas
+//        List<Review> reviews = place.getReviews();
+//
+//        // Mapear a DTO
+//        return reviews.stream()
+//                .map(r -> new ReviewDTO(
+//                        r.getId(),
+//                        r.getUserId(),
+//                        r.getScore(),
+//                        r.getComment(),
+//                        r.getDate()
+//                ))
+//                .toList();
+//    }
 
 }

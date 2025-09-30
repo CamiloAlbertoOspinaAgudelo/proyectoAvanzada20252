@@ -1,17 +1,28 @@
 package co.edu.uniquindio.application.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Entity
 public class Review {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User user;
+    @Column(nullable = false)
     private int rating;
+    @Lob
+    @Column(nullable = false)
     private String comment;
-    private LocalDateTime date;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 }

@@ -34,8 +34,9 @@ public class User {
     private String phone;
     @Column(nullable = false)
     private LocalDate dateBirth;
-    @Column(length = 200)
+    @Column(length = 300)
     private String photoUrl;
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
 }

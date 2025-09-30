@@ -1,11 +1,19 @@
 package co.edu.uniquindio.application.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Entity
 public class HostProfile {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 }

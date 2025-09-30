@@ -6,6 +6,6 @@ public record ReviewDTO(
         String id,
         int rating,
         String comment,
-        LocalDateTime date
+        LocalDateTime createdAt
 ) {
 }

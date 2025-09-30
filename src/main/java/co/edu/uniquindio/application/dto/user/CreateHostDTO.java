@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Past;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public record CreateHostDTO(
         @NotBlank @Length(max=100) String name,
@@ -16,7 +17,7 @@ public record CreateHostDTO(
         @NotBlank @Length(min = 8) String password,
         @Length(max = 300) String photoUrl,
         @NotNull @Past LocalDate dateBirth,
-        @NotNull Rol rol,
+        @NotNull Set<Rol> rol,
         @NotBlank @Length(max = 300) String description,
         @Length(max = 200) String documents
 ) {

@@ -11,6 +11,6 @@ public record CreateReviewDTO(
         @NotBlank String id,
         @NotNull @Min (1) @Max(5) int rating,
         @NotBlank @Length(max = 300) String comment,
-        LocalDateTime date
+        LocalDateTime createdAt
 ) {
 }

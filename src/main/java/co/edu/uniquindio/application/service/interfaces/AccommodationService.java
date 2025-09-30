@@ -17,6 +17,6 @@ public interface AccommodationService {
     List<AccommodationDTO> listAll();
     void addImage(String id, String image) throws Exception;
     void deleteImage(String id, String imageId) throws Exception;
-    String getMetrics(String id, LocalDate from, LocalDate to) throws Exception;
-    List<ReviewDTO> getReviews(String id) throws Exception;
+//    String getMetrics(String id, LocalDate from, LocalDate to) throws Exception;
+//    List<ReviewDTO> getReviews(String id) throws Exception;
 }

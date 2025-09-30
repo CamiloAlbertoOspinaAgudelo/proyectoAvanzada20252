@@ -11,7 +11,7 @@ import org.mapstruct.MappingConstants;
 public interface ReviewMapper {
 
     @Mapping(target = "id", expression = "java(java.util.UUID.randomUUID().toString())")
-    @Mapping(target = "date", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
 
     Review toEntity(CreateReviewDTO reviewDTO);
 
