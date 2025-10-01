@@ -1,10 +1,7 @@
 package co.edu.uniquindio.application.model.entity;
 
 import co.edu.uniquindio.application.model.enums.Status;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,9 +15,19 @@ import java.time.LocalDateTime;
 public class Reservation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    private LocalDateTime from;
-    private LocalDateTime to;
+    private Long id;
+    @Column(nullable = false)
+    private LocalDateTime dateFrom;
+    @Column(nullable = false)
+    private LocalDateTime dateTo;
+    @Column(nullable = false)
     private int guests;
+    @Column(nullable = false)
     private Status status;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Accommodation accommodation;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private User user;
 }

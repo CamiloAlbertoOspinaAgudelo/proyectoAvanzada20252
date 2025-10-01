@@ -17,6 +17,6 @@ public record CreateUserDTO (
         @NotBlank @Length(min = 8) String password,
         @Length(max = 300) String photoUrl,
         @NotNull @Past LocalDate dateBirth,
-        @NotNull Set<Rol> rol
+        @NotNull Rol rol
 ) {
 }

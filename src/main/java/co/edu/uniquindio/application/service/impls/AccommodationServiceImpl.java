@@ -25,8 +25,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class AccommodationServiceImpl implements AccommodationService {
-    private final Map<String, Accommodation> placeStore = new ConcurrentHashMap<>();
-    private final AccommodationRepository accommodationRepository;
+    private final Map<Long, Accommodation> placeStore = new ConcurrentHashMap<>();
+//    private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper placeMapper;
     private final AddressMapper addressMapper;
 

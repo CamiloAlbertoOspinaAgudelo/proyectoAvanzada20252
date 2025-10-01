@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     @ManyToOne
     @JoinColumn(nullable = false)
     private User user;
@@ -25,4 +25,7 @@ public class Review {
     private String comment;
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Accommodation accommodation;
 }

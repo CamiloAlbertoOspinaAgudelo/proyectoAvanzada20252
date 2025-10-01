@@ -12,11 +12,11 @@ import lombok.*;
 public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
-    @Column
+    private Long id;
+    @Column(nullable = false)
     private String city;
-    @Column
-    private String address;
+    @Column(nullable = false)
+    private String direction;
     @OneToOne
     private Location location;
 }

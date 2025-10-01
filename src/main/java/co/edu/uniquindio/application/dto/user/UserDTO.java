@@ -6,10 +6,10 @@ import java.time.LocalDate;
 import java.util.Set;
 
 public record UserDTO(
-        String id,
+        Long id,
         String name,
         String email,
-        Set<Rol> rol,
+        Rol rol,
         String password,
         String phone,
         LocalDate dateBirth,

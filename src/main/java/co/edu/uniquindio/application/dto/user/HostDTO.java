@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 public record HostDTO(
-        String id,
+        Long id,
         String name,
         String email,
-        Set<Rol> rol,
+        Rol rol,
         String phone,
         LocalDate dateBirth,
         String photoUrl,

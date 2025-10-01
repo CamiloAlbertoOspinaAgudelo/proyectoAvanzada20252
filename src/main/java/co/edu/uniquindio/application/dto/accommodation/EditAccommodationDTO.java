@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 
 import java.util.List;
+import java.util.Set;
 
 public record EditAccommodationDTO(
         @NotBlank String title,
@@ -14,7 +15,7 @@ public record EditAccommodationDTO(
         @NotNull AddressDTO address,
         @NotNull double priceNight,
         @NotNull @Min(1) int capMax,
-        List<Service> services,
+        Set<Service> services,
         List<String> photoUrls
 ) {
 }

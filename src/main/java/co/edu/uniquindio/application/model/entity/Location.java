@@ -12,8 +12,10 @@ import lombok.*;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+    @Column(nullable = false)
     private double lat;
+    @Column(nullable = false)
     private double lng;
     @OneToOne
     private Address address;

@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class ReserveServiceImpl implements ReserveService {
-    private final Map<String, Reservation> reserveStore = new ConcurrentHashMap<>();
+    private final Map<Long, Reservation> reserveStore = new ConcurrentHashMap<>();
     private final ReserveMapper reserveMapper;
 
     @Override

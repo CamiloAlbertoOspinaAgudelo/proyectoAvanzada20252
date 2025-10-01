@@ -19,17 +19,17 @@ import java.util.Set;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     @Column(nullable = false, length = 100)
     private String name;
     @Column(unique = true, nullable = false)
     private String email;
     @Column(nullable = false, length = 200)
     private String password;
-    @ElementCollection
-    private Set<Status> status;
-    @ElementCollection
-    private Set<Rol> rol;
+    @Column
+    private Status status;
+    @Column
+    private Rol rol;
     @Column(length = 10)
     private String phone;
     @Column(nullable = false)

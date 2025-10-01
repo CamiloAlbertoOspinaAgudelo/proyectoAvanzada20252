@@ -1,9 +1,6 @@
 package co.edu.uniquindio.application.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +14,9 @@ import java.time.LocalDateTime;
 public class PasswordResetCode {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
+    @Column(nullable = false)
     private String code;
+    @Column(nullable = false)
     private LocalDateTime sent;
 }

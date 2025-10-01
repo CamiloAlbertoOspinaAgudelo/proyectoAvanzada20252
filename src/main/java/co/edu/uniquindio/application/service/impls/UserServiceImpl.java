@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final Map<String, User> userStore = new ConcurrentHashMap<>();
+    private final Map<Long, User> userStore = new ConcurrentHashMap<>();
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 //    private final PasswordEncoder passwordEncoder;
@@ -63,11 +63,10 @@ public class UserServiceImpl implements UserService {
             throw new Exception("Usuario no encontrado.");
         }
 
-        Set<Status> statuses = null;
-        statuses.add(Status.INACTIVE);
+        Status status = Status.INACTIVE;
 
         // Eliminación del usuario
-        user.setStatus(statuses);
+        user.setStatus(status);
     }
 
     @Override

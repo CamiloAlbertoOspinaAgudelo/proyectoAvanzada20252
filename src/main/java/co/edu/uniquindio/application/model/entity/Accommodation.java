@@ -18,16 +18,23 @@ import java.util.Set;
 public class Accommodation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
+    private Long id;
     @Column(nullable = false, length = 100)
     private String title;
     @Column(nullable = false, length = 300)
     private String description;
     @OneToOne
     private Address address;
+    @Column(nullable = false)
     private double PriceNight;
+    @Column(nullable = false)
     private int capMax;
-    private List<Service> services;
+    @ElementCollection
+    private Set<Service> services;
+    @Column
     private Status status;
+
     private List<String> photoUrls;
+    @OneToMany(mappedBy = "accommodation")
+    private List<Review> reviews;
 }

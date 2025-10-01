@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
 
-    private final Map<String, Review> reviewStore = new ConcurrentHashMap<>();
+    private final Map<Long, Review> reviewStore = new ConcurrentHashMap<>();
     private final ReviewMapper reviewMapper;
 
     @Override
