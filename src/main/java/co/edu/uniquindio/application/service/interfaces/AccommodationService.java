@@ -11,12 +11,12 @@ import java.util.List;
 public interface AccommodationService {
 
     void create(CreateAccommodationDTO accommodationDTO) throws  Exception;
-    AccommodationDTO get(String id) throws  Exception;
-    void update(String id, EditAccommodationDTO accommodationDTO) throws  Exception;
-    void delete(String id) throws  Exception;
+    AccommodationDTO get(Long id) throws  Exception;
+    void update(Long id, EditAccommodationDTO accommodationDTO) throws  Exception;
+    void delete(Long id) throws  Exception;
     List<AccommodationDTO> listAll();
-    void addImage(String id, String image) throws Exception;
-    void deleteImage(String id, String imageId) throws Exception;
-//    String getMetrics(String id, LocalDate from, LocalDate to) throws Exception;
-//    List<ReviewDTO> getReviews(String id) throws Exception;
+    void addImage(Long id, String image) throws Exception;
+    void deleteImage(Long id, String imageId) throws Exception;
+//    String getMetrics(Long id, LocalDate from, LocalDate to) throws Exception;
+//    List<ReviewDTO> getReviews(Long id) throws Exception;
 }

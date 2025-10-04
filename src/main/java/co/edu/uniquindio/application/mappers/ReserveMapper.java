@@ -9,7 +9,6 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReserveMapper {
-    @Mapping(target = "id", expression = "java(Long.valueOf(java.util.UUID.randomUUID().toString()))")
     Reservation toEntity(CreateReserveDTO reserveDTO);
     ReserveDTO toReserveDTO(Reservation reservation);
 }

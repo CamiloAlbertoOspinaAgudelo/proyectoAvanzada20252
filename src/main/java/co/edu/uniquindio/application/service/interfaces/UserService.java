@@ -10,8 +10,8 @@ import java.util.List;
 public interface UserService {
 
     void create(CreateUserDTO userDTO) throws Exception;
-    UserDTO get(String id) throws Exception;
-    void delete(String id) throws Exception;
-    void update(String id, EditUserDTO userDTO) throws Exception;
-    void changePassword(String id, String oldPassword, String newPassword) throws Exception;
+    UserDTO get(Long id) throws Exception;
+    void delete(Long id) throws Exception;
+    void update(Long id, EditUserDTO userDTO) throws Exception;
+    void changePassword(Long id, String oldPassword, String newPassword) throws Exception;
 }

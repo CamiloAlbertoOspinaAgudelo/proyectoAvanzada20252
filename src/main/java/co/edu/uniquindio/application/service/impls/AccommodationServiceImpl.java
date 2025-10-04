@@ -20,13 +20,14 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
 public class AccommodationServiceImpl implements AccommodationService {
-    private final Map<Long, Accommodation> placeStore = new ConcurrentHashMap<>();
-//    private final AccommodationRepository accommodationRepository;
+
+    private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper placeMapper;
     private final AddressMapper addressMapper;
 
@@ -35,28 +36,29 @@ public class AccommodationServiceImpl implements AccommodationService {
 
         Accommodation newPlace = placeMapper.toEntity(accommodationDTO);
 
-        placeStore.put(newPlace.getId(), newPlace);
+        accommodationRepository.save(newPlace);
     }
 
     @Override
-    public AccommodationDTO get(String id) throws Exception{
-        Accommodation place = placeStore.get(id);
+    public AccommodationDTO get(Long id) throws Exception{
+        Optional<Accommodation> place = accommodationRepository.findById(id);
 
-        if (place == null) {
+        if (place.isEmpty()) {
             throw new Exception("Alojamiento no encontrado.");
         }
 
-        return placeMapper.toAccommodationDTO(place);
+        return placeMapper.toAccommodationDTO(place.get());
     }
 
     @Override
-    public void update(String id, EditAccommodationDTO accommodationDTO) throws Exception{
-        Accommodation place = placeStore.get(id);
+    public void update(Long id, EditAccommodationDTO accommodationDTO) throws Exception{
+        Optional<Accommodation> placeOption = accommodationRepository.findById(id);
 
-        if (place == null) {
+        if (placeOption.isEmpty()) {
             throw new Exception("Alojamiento no encontrado.");
         }
         Address address = addressMapper.toEntity(accommodationDTO.address());
+        Accommodation place = placeOption.get();
 
         place.setTitle(accommodationDTO.title());
         place.setDescription(accommodationDTO.description());
@@ -67,32 +69,31 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public void delete(String id) throws Exception {
-        Accommodation place = placeStore.get(id);
+    public void delete(Long id) throws Exception {
+        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
 
-        if (place == null) {
+        if (placeOpt.isEmpty()) {
             throw new Exception("Alojamiento no encontrado.");
         }
+
+        Accommodation place = placeOpt.get();
 
         place.setStatus(Status.INACTIVE);
     }
 
     @Override
     public List<AccommodationDTO> listAll(){
-        List<AccommodationDTO> list = new ArrayList<>();
-        for (Accommodation accommodation : placeStore.values()) {
-            list.add(placeMapper.toAccommodationDTO(accommodation));
-        }
-        return list;
+        return accommodationRepository.findAll().stream().map(placeMapper::toAccommodationDTO).toList();
     }
 
     @Override
-    public void addImage(String id, String image) throws Exception{
-        Accommodation place = placeStore.get(id);
+    public void addImage(Long id, String image) throws Exception{
+        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
 
-        if (place == null) {
+        if (placeOpt.isEmpty()) {
             throw new Exception("Alojamiento no encontrado.");
         }
+        Accommodation place = placeOpt.get();
 
         List<String> photos = place.getPhotoUrls();
 
@@ -107,12 +108,13 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public void deleteImage(String id, String imageId) throws Exception{
-        Accommodation place = placeStore.get(id);
+    public void deleteImage(Long id, String imageId) throws Exception{
+        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
 
-        if (place == null) {
+        if (placeOpt.isEmpty()) {
             throw new Exception("Alojamiento no encontrado.");
         }
+        Accommodation place = placeOpt.get();
 
         List<String> photos = place.getPhotoUrls();
 

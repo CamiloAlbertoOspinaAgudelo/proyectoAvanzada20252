@@ -23,7 +23,7 @@ public class Accommodation {
     private String title;
     @Column(nullable = false, length = 300)
     private String description;
-    @OneToOne
+    @Embedded
     private Address address;
     @Column(nullable = false)
     private double PriceNight;

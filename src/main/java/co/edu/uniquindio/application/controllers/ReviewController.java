@@ -3,6 +3,7 @@ package co.edu.uniquindio.application.controllers;
 
 import co.edu.uniquindio.application.dto.review.CreateReviewDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
+import co.edu.uniquindio.application.dto.review.EditReviewDTO;
 import co.edu.uniquindio.application.service.interfaces.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ReviewController {
 
     //Responder
     @PostMapping("/{id}/response")
-    public ResponseEntity<ResponseDTO<String>> response(@PathVariable String id, @Valid @RequestBody CreateReviewDTO reviewDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> response(@PathVariable Long id, @Valid @RequestBody EditReviewDTO reviewDTO) throws Exception{
         reviewService.response(id, reviewDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "La respuesta ha sido creada"));
     }

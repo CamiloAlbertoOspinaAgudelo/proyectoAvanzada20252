@@ -10,7 +10,6 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReviewMapper {
 
-    @Mapping(target = "id", expression = "java(Long.valueOf(java.util.UUID.randomUUID().toString()))")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
 
     Review toEntity(CreateReviewDTO reviewDTO);

@@ -8,6 +8,6 @@ import java.util.List;
 public interface ReserveService {
     void create(CreateReserveDTO reserveDTO) throws Exception;
     List<ReserveDTO> listAll();
-    ReserveDTO get(String id) throws Exception;
-    void cancel(String id) throws Exception;
+    ReserveDTO get(Long id) throws Exception;
+    void cancel(Long id) throws Exception;
 }

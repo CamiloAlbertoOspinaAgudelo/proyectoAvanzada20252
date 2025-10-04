@@ -24,19 +24,19 @@ public class UserController {
     private final UserService userService;
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable String id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> edit(@PathVariable Long id, @Valid @RequestBody EditUserDTO userDTO) throws Exception{
         userService.update(id, userDTO);
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDTO<String>> delete(@PathVariable String id) throws Exception{
+    public ResponseEntity<ResponseDTO<String>> delete(@PathVariable Long id) throws Exception{
         userService.delete(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido eliminado"));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable String id) throws Exception{
+    public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable Long id) throws Exception{
         UserDTO userDTO = userService.get(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
     }
@@ -49,7 +49,7 @@ public class UserController {
 
     // listar alojamientos del host
     @GetMapping("/{id}/accommodations")
-    public ResponseEntity<ResponseDTO<HostDTO>> getAccommodations(@PathVariable String id) throws Exception{
+    public ResponseEntity<ResponseDTO<HostDTO>> getAccommodations(@PathVariable Long id) throws Exception{
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 

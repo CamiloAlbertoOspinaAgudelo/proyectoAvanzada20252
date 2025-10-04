@@ -20,10 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-    private final Map<Long, User> userStore = new ConcurrentHashMap<>();
     private final UserRepository userRepository;
     private final UserMapper userMapper;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void create(CreateUserDTO userDTO) throws Exception{
@@ -34,72 +33,73 @@ public class UserServiceImpl implements UserService {
 
         // Transformación del DTO a User
         User newUser = userMapper.toEntity(userDTO);
-        newUser.setPassword(encode(userDTO.password()));
+        newUser.setPassword(passwordEncoder.encode(userDTO.password()));
 
         // Almacenamiento del usuario
-        userStore.put(newUser.getId(), newUser);
+        userRepository.save(newUser);
     }
 
     @Override
-    public UserDTO get(String id) throws Exception{
+    public UserDTO get(Long id) throws Exception{
         // Recuperación del usuario
-        User user = userStore.get(id);
+        Optional<User> user = userRepository.findById(id);
 
         // Si el usuario no existe, lanzar una excepción
-        if (user == null) {
+        if (user.isEmpty()) {
             throw new Exception("Usuario no encontrado.");
         }
 
-        return userMapper.toUserDTO(user);
+        return userMapper.toUserDTO(user.get());
     }
 
     @Override
-    public void delete(String id) throws Exception {
+    public void delete(Long id) throws Exception {
         // Recuperación del usuario
-        User user = userStore.get(id);
+        Optional<User> user = userRepository.findById(id);
 
         // Si el usuario no existe, lanzar una excepción
-        if (user == null) {
+        if (user.isEmpty()) {
             throw new Exception("Usuario no encontrado.");
         }
 
-        Status status = Status.INACTIVE;
-
-        // Eliminación del usuario
-        user.setStatus(status);
+        userRepository.delete(user.get());
     }
 
     @Override
-    public void update(String id, EditUserDTO userDTO) throws Exception{
+    public void update(Long id, EditUserDTO userDTO) throws Exception{
         // Recuperación del usuario
-        User user = userStore.get(id);
+        Optional<User> user = userRepository.findById(id);
 
         // Si el usuario no existe, lanzar una excepción
-        if (user == null) {
+        if (user.isEmpty()) {
             throw new Exception("Usuario no encontrado.");
         }
 
-        user.setName(userDTO.name());
-        user.setPhone(userDTO.phone());
-        user.setPhotoUrl(userDTO.photoUrl());
+        User newUser = user.get();
+        newUser.setName(userDTO.name());
+        newUser.setPhone(userDTO.phone());
+        newUser.setDateBirth(userDTO.dateBirth());
+        newUser.setPhotoUrl(userDTO.photoUrl());
 
     }
 
     @Override
-    public void changePassword(String id, String oldPassword, String newPassword) throws Exception{
+    public void changePassword(Long id, String oldPassword, String newPassword) throws Exception{
 
         // Recuperación del usuario
-        User user = userStore.get(id);
+        Optional<User> userOpt = userRepository.findById(id);
 
         // Si el usuario no existe, lanzar una excepción
-        if (user == null) {
+        if (userOpt.isEmpty()) {
             throw new Exception("Usuario no encontrado.");
         }
 
-//        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-//            throw new Exception("Usuario no encontrado.");
-//        }
-//        user.setPassword(passwordEncoder.encode(newPassword));
+        User user = userOpt.get();
+
+        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+            throw new Exception("La nueva contrase;a no puede ser igual a la contrase;a ya existente.");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
 
     }
 
@@ -109,8 +109,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public boolean emailExist(String email){
-        return userStore.values().stream().anyMatch(
-                u -> u.getEmail().equalsIgnoreCase(email)
-        );
+        return userRepository.findByEmail(email).isPresent();
     }
 }

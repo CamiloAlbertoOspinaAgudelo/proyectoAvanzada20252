@@ -1,4 +1,4 @@
 package co.edu.uniquindio.application.service.interfaces;
 
-public interface AuthService {
+public interface EmailService {
 }

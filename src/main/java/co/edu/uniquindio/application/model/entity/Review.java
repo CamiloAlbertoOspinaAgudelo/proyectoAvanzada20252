@@ -25,6 +25,8 @@ public class Review {
     private String comment;
     @Column(nullable = false)
     private LocalDateTime createdAt;
+    @Column
+    private String response;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Accommodation accommodation;
