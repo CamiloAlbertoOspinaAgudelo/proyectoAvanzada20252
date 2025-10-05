@@ -1,7 +1,31 @@
+POST  http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+  "name": "pepito",
+  "email": "pepito@gmail.com",
+  "password": "12345678",
+  "dateBirth": "2000-02-02",
+  "rol": "USER"
+}
+
+###
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
   "email": "pepito@gmail.com",
   "password": "12345678"
+}
+
+###
+PUT http://localhost:8080/api/users/1
+Content-Type: application/json
+Authorization: Bearer <>
+
+{
+  "name": "Carlos",
+  "phone": "333333",
+  "photoUrl": "mi foto",
+  "dateBirth": "2000-08-22"
 }

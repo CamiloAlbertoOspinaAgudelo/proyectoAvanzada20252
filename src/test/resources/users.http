@@ -21,6 +21,8 @@ Content-Type: application/json
 ### Actualizar un usuario (cambie 1 por el id del usuario que desea actualizar)
 PUT http://localhost:8080/api/users/1
 Content-Type: application/json
+Authorization: Bearer <eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InBlcGl0b0BnbWFpbC5jb20iLCJuYW1lIjoicGVwaXRvIiwicm9sZSI6IlJPTEVfVVNFUiIsInN1YiI6IjEiLCJpYXQiOjE3NTk2ODcxOTksImV4cCI6MTc1OTY5MDc5OX0.DXaLnl3np8RRPjvp_FjxZLVfng8ZkG4DNdUnulm1FEI>
+
 
 {
   "name": "Carlos",
