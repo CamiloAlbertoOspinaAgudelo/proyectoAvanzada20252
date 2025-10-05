@@ -5,15 +5,21 @@ import co.edu.uniquindio.application.dto.accommodation.CreateAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.EditAccommodationDTO;
 import co.edu.uniquindio.application.dto.review.ReviewDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
+import co.edu.uniquindio.application.dto.user.HostDTO;
+import co.edu.uniquindio.application.dto.user.UserDTO;
 import co.edu.uniquindio.application.mappers.AccommodationMapper;
 import co.edu.uniquindio.application.mappers.AddressMapper;
-import co.edu.uniquindio.application.model.entity.Accommodation;
-import co.edu.uniquindio.application.model.entity.Address;
-import co.edu.uniquindio.application.model.entity.Review;
+import co.edu.uniquindio.application.mappers.HostMapper;
+import co.edu.uniquindio.application.mappers.UserMapper;
+import co.edu.uniquindio.application.model.entity.*;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.AccommodationRepository;
+import co.edu.uniquindio.application.repositories.HostRepository;
+import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -30,9 +36,13 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper placeMapper;
     private final AddressMapper addressMapper;
+    private final HostMapper hostMapper;
+    private final HostRepository hostRepository;
 
     @Override
     public void create(CreateAccommodationDTO accommodationDTO) throws Exception{
+
+        HostDTO authenticatedHost = getAuthenticatedHost();
 
         Accommodation newPlace = placeMapper.toEntity(accommodationDTO);
 
@@ -171,5 +181,13 @@ public class AccommodationServiceImpl implements AccommodationService {
 //                ))
 //                .toList();
 //    }
+
+    public HostDTO getAuthenticatedHost() throws Exception {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long idUser = Long.parseLong(userDetails.getUsername());
+        HostProfile host = hostRepository.findByUserId(idUser)
+                .orElseThrow(() -> new Exception("No se encontró un host asociado al usuario autenticado."));
+        return hostMapper.toHostDTO(host);
+    }
 
 }

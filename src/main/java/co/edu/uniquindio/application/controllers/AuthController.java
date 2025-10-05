@@ -4,8 +4,10 @@ package co.edu.uniquindio.application.controllers;
 import co.edu.uniquindio.application.dto.auth.LogInDTO;
 import co.edu.uniquindio.application.dto.auth.RecoverDTO;
 import co.edu.uniquindio.application.dto.auth.ResetDTO;
+import co.edu.uniquindio.application.dto.auth.TokenDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
+import co.edu.uniquindio.application.service.interfaces.AuthService;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final UserService userService;
+    private final AuthService authService;
 
     //register
     @PostMapping("/register")
@@ -32,8 +35,9 @@ public class AuthController {
 
     //login
     @PostMapping("/login")
-    public ResponseEntity<ResponseDTO<String>> login(@Valid @RequestBody LogInDTO logInDTO) throws Exception{
-        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "El login ha sido exitoso"));
+    public ResponseEntity<ResponseDTO<TokenDTO>> login(@Valid @RequestBody LogInDTO logInDTO) throws Exception{
+        TokenDTO token = authService.login(logInDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, token));
     }
 
     //solicitar contraseña

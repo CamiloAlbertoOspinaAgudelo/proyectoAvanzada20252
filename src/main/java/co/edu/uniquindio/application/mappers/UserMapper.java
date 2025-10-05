@@ -11,6 +11,7 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserMapper {
     @Mapping(target = "status", constant = "ACTIVE")
+    @Mapping(target = "rol", constant = "USER")
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     User toEntity(CreateUserDTO userDTO);
 

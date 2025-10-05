@@ -26,9 +26,9 @@ public class User {
     private String email;
     @Column(nullable = false, length = 200)
     private String password;
-    @Column
+    @Enumerated
     private Status status;
-    @Column
+    @Enumerated
     private Rol rol;
     @Column(length = 10)
     private String phone;

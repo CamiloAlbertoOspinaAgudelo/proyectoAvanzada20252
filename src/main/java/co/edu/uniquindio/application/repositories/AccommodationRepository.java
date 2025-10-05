@@ -11,4 +11,6 @@ import java.util.List;
 public interface AccommodationRepository  extends JpaRepository<Accommodation, Long> {
     @Query("SELECT p FROM Accommodation p WHERE p.title = :title")
     List<Accommodation> getListAccommodations(String title);
+
+    List<Accommodation> findByHost_Id(Long hostId);
 }

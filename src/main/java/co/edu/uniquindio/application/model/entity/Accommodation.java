@@ -35,6 +35,13 @@ public class Accommodation {
     private Status status;
 
     private List<String> photoUrls;
-    @OneToMany(mappedBy = "accommodation")
+    @OneToMany//(mappedBy = "accommodation")
+    @JoinColumn(nullable = false)
     private List<Review> reviews;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private HostProfile host;
+    @OneToMany
+    @JoinColumn(nullable = false)
+    private List<Reservation> reservations;
 }
