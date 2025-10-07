@@ -1,14 +1,25 @@
 package co.edu.uniquindio.application.repositories;
 
+import co.edu.uniquindio.application.dto.accommodation.MetricsDTO;
 import co.edu.uniquindio.application.model.entity.Reservation;
+import co.edu.uniquindio.application.model.enums.Status;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface ReserveRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findAllByAccommodation_Host_Id(@Param("hostId") Long hostId);
+    List<Reservation> findAllByStatus(@Param("status")Status status);
+
+    @Query("select SIZE(r.accommodation.reservations), r.accommodation.avgRating, r.accommodation.totalRatings from Reservation r where r.accommodation.id = :id " +
+            "and (:startDate is null or r.dateFrom >= :startDate ) " +
+            "and (:endDate is null or r.dateTo <= :endDate )")
+    MetricsDTO getMetrics(Long id, LocalDateTime startDate, LocalDateTime endDate);
+
 }

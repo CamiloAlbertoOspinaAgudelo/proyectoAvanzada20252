@@ -1,0 +1,1 @@
+GET http://localhost:8080/api/accommodations/1/metrics?to=2023-10-10

@@ -30,4 +30,8 @@ public class Review {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Accommodation accommodation;
+//
+//    @OneToOne
+//    @JoinColumn(nullable = false)
+//    private Reservation reservation;
 }

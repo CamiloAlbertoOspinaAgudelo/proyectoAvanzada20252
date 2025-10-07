@@ -8,6 +8,7 @@ import co.edu.uniquindio.application.dto.auth.TokenDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
 import co.edu.uniquindio.application.service.interfaces.AuthService;
+import co.edu.uniquindio.application.service.interfaces.PasswordResetService;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
     //register
     @PostMapping("/register")
@@ -43,12 +45,14 @@ public class AuthController {
     //solicitar contraseña
     @PostMapping("/recover")
     public ResponseEntity<ResponseDTO<String>> recover(@Valid @RequestBody RecoverDTO recoverDTO) throws Exception{
+        passwordResetService.sendCodeReset(recoverDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Se envio el codigo exitosamente"));
     }
 
     //resetear contraseña
     @PostMapping("/reset")
     public ResponseEntity<ResponseDTO<String>> reset(@Valid @RequestBody ResetDTO resetDTO) throws Exception{
+        passwordResetService.resetPassword(resetDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new ResponseDTO<>(false, "Se reseteo la contraseña exitosamente"));
     }
 }

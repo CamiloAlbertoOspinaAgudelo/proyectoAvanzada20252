@@ -20,19 +20,11 @@ public class HostProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(nullable = false)
     private User user;
     @Column
     private String description;
     @ElementCollection
     private List<String> documents;
-    @OneToMany
-    @JoinColumn(nullable = false)
-    private List<Accommodation> accommodation;
-    @Enumerated(EnumType.STRING)
-    private Status status;
-    @Enumerated(EnumType.STRING)
-    private Rol rol;
-    private LocalDateTime createdAt;
 }

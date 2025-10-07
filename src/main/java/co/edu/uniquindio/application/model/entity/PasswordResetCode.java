@@ -19,4 +19,8 @@ public class PasswordResetCode {
     private String code;
     @Column(nullable = false)
     private LocalDateTime sent;
+
+    @ManyToOne
+    private User user;
+
 }

@@ -24,6 +24,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ResponseDTO<String>> generalExceptionHandler (Exception e){
+        e.printStackTrace();
         return ResponseEntity.internalServerError().body( new ResponseDTO<>(true, e.getMessage()) );
     }
 

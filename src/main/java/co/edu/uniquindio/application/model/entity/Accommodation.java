@@ -31,17 +31,27 @@ public class Accommodation {
     private int capMax;
     @ElementCollection
     private Set<Service> services;
-    @Column
+
+    @Column(nullable = false)
     private Status status;
 
-    private List<String> photoUrls;
-    @OneToMany//(mappedBy = "accommodation")
-    @JoinColumn(nullable = false)
+    @ElementCollection
+    private List<String> images;
+
+    @OneToMany(mappedBy = "accommodation")
     private List<Review> reviews;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private HostProfile host;
-    @OneToMany
-    @JoinColumn(nullable = false)
+
+    @OneToMany(mappedBy = "accommodation")
     private List<Reservation> reservations;
+
+    @Column(nullable = false)
+    private int totalRatings;
+
+    @Column(nullable = false)
+    private double avgRating;
+
 }

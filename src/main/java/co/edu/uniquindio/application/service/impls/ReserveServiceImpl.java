@@ -1,15 +1,19 @@
 package co.edu.uniquindio.application.service.impls;
 
+import co.edu.uniquindio.application.dto.EmailDTO;
 import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.mappers.ReserveMapper;
 import co.edu.uniquindio.application.model.entity.Reservation;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
+import co.edu.uniquindio.application.service.interfaces.EmailService;
 import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +22,7 @@ import java.util.Optional;
 public class ReserveServiceImpl implements ReserveService {
     private final ReserveRepository reserveRepository;
     private final ReserveMapper reserveMapper;
+    private final EmailService emailService;
 
     @Override
     public void create(CreateReserveDTO reserveDTO) throws Exception{
@@ -46,5 +51,21 @@ public class ReserveServiceImpl implements ReserveService {
         }
         Reservation reservation = reservationOptional.get();
         reservation.setStatus(Status.INACTIVE);
+    }
+
+    public void sendReminder() throws Exception {
+        LocalDate today = LocalDate.now();
+
+        List<Reservation> reservations = reserveRepository.findAllByStatus(Status.ACTIVE);
+
+        for (Reservation reservation: reservations){
+            if (reservation.getDateFrom().isBefore(LocalDateTime.now().plusHours(48))){
+                EmailDTO emailDTO = new EmailDTO("Recordatorio de reserva","Le recordamos que" +
+                        " su reserva del alojamiento: "+ reservation.getAccommodation().getTitle() +
+                        " desde la fecha: "+ reservation.getDateTo() + " hasta la fecha: "+ reservation.getDateFrom()+
+                        " esta a menos de 48 horas de inicio.",reservation.getUser().getEmail());
+                emailService.sendMail(emailDTO);
+            }
+        }
     }
 }

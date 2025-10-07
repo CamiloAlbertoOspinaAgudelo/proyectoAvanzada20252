@@ -3,26 +3,24 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.CreateAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.EditAccommodationDTO;
+import co.edu.uniquindio.application.dto.accommodation.MetricsDTO;
 import co.edu.uniquindio.application.dto.review.ReviewDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.HostDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
-import co.edu.uniquindio.application.mappers.AccommodationMapper;
-import co.edu.uniquindio.application.mappers.AddressMapper;
-import co.edu.uniquindio.application.mappers.HostMapper;
-import co.edu.uniquindio.application.mappers.UserMapper;
+import co.edu.uniquindio.application.mappers.*;
 import co.edu.uniquindio.application.model.entity.*;
 import co.edu.uniquindio.application.model.enums.Status;
-import co.edu.uniquindio.application.repositories.AccommodationRepository;
-import co.edu.uniquindio.application.repositories.HostRepository;
-import co.edu.uniquindio.application.repositories.UserRepository;
+import co.edu.uniquindio.application.repositories.*;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
+import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +36,9 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final AddressMapper addressMapper;
     private final HostMapper hostMapper;
     private final HostRepository hostRepository;
+    private final ReserveRepository reserveRepository;
+    private final ReviewRepository reviewRepository;
+    private final ReviewMapper reviewMapper;
 
     @Override
     public void create(CreateAccommodationDTO accommodationDTO) throws Exception{
@@ -97,86 +98,19 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public void addImage(Long id, String image) throws Exception{
-        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
-
-        if (placeOpt.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
-        }
-        Accommodation place = placeOpt.get();
-
-        List<String> photos = place.getPhotoUrls();
-
-        if (photos.size() >= 10) {
-            throw new Exception("El alojamiento no puede tener mas de 10 fotos.");
-        }
-
-        photos.add(image);
-
-        place.setPhotoUrls(photos);
-
+    public MetricsDTO getMetrics(Long id, LocalDateTime from, LocalDateTime to) throws Exception{
+        return reserveRepository.getMetrics(id, from, to);
     }
 
     @Override
-    public void deleteImage(Long id, String imageId) throws Exception{
-        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
-
-        if (placeOpt.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
+    public List<ReviewDTO> getReviews(Long id) throws Exception{
+        List<Review> reviews = reviewRepository.findByAccommodation_ID(id);
+        List<ReviewDTO> reviewDTOs = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewDTOs.add(reviewMapper.toReviewDTO(review));
         }
-        Accommodation place = placeOpt.get();
-
-        List<String> photos = place.getPhotoUrls();
-
-        if (!photos.contains(imageId)) {
-            throw new Exception("Foto no encontrada.");
-        }
-
-        photos.removeIf(photoId -> photoId.equals(imageId));
-
+        return reviewDTOs;
     }
-
-    @Override
-    public String getMetrics(Long id, LocalDate from, LocalDate to) throws Exception{
-        Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
-
-        if (placeOpt.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
-        }
-
-        Accommodation place = placeOpt.get();
-
-        long totalReservas = null;
-
-        List<Review> reviews = null;
-
-        double promedioCalificaciones = null;
-
-        return ("Número de reservas: " + totalReservas + "Promedio de calificaciones: " + promedioCalificaciones);
-    }
-
-//    @Override
-//    public List<ReviewDTO> getReviews(String id) throws Exception{
-//        Accommodation place = placeStore.get(id);
-//
-//        if (place == null) {
-//            throw new Exception("Alojamiento no encontrado.");
-//        }
-//
-//        // Obtener reseñas
-//        List<Review> reviews = place.getReviews();
-//
-//        // Mapear a DTO
-//        return reviews.stream()
-//                .map(r -> new ReviewDTO(
-//                        r.getId(),
-//                        r.getUserId(),
-//                        r.getScore(),
-//                        r.getComment(),
-//                        r.getDate()
-//                ))
-//                .toList();
-//    }
 
     public HostDTO getAuthenticatedHost() throws Exception {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

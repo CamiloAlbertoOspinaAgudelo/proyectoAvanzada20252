@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -61,31 +62,27 @@ public class AccommodationController {
         return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento ha sido eliminado"));
     }
 
-    //subir imagen
-    @PostMapping("/{id}/images")
-    public ResponseEntity<ResponseDTO<String>> addImage(@PathVariable Long id, @Valid @RequestBody String imageUrl) throws Exception{
-        accommodationService.addImage(id, imageUrl);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new ResponseDTO<>(false, "La imagen ha sido añadida"));
-    }
-
-    //delete imagen
-    @DeleteMapping("/{id}/images/{imageId}")
-    public ResponseEntity<ResponseDTO<String>> deleteImage(@PathVariable Long id, @PathVariable String imageId) throws Exception{
-        accommodationService.deleteImage(id, imageId);
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El alojamiento ha sido eliminado"));
-    }
-
     //obtener metricas
     @GetMapping("/{id}/metrics")
-    public ResponseEntity<ResponseDTO<MetricsDTO>> getMetric(@PathVariable Long id, @Valid @RequestBody LocalDate to, @Valid @RequestBody LocalDate from) throws Exception{
-//        accommodationService.getMetrics(id, from, to);
-        return ResponseEntity.ok(new ResponseDTO<>(false, null));
+    public ResponseEntity<ResponseDTO<MetricsDTO>> getMetric(@PathVariable Long id, @RequestParam(required = false) LocalDate to, @RequestParam(required = false) LocalDate from) throws Exception{
+        LocalDateTime fromDate =null;
+        LocalDateTime toDate = null;
+
+        if(from != null){
+            fromDate = LocalDateTime.of(from.getYear(), from.getMonth(), from.getDayOfMonth(), 0, 0);
+        }
+
+        if(to !=null){
+            toDate = LocalDateTime.of(to.getYear(), to.getMonth(), to.getDayOfMonth(), 0, 0);
+        }
+
+        return ResponseEntity.ok(new ResponseDTO<>(false, accommodationService.getMetrics(id, fromDate, toDate)));
     }
 
     //obtener comentarios del alojamiento
     @GetMapping("/{id}/reviews")
     public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable Long id) throws Exception{
-//        accommodationService.getReviews(id);
+        accommodationService.getReviews(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, null));
     }
 }

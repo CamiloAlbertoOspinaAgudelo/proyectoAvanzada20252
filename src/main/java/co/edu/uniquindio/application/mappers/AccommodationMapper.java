@@ -10,6 +10,9 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface AccommodationMapper {
+
+    @Mapping(target = "totalRatings", constant = "0")
+    @Mapping(target = "avgRating", constant = "0")
     @Mapping(target = "status", constant = "ACTIVE")
     Accommodation toEntity(CreateAccommodationDTO accommodationDTO);
     AccommodationDTO toAccommodationDTO(Accommodation accommodation);

@@ -13,6 +13,7 @@ public record AccommodationDTO(
         String PriceNight,
         int capMax,
         Set<Service> services,
-        List<String> photoUrls
+        List<String> photoUrls,
+        double avgRating
 ) {
 }

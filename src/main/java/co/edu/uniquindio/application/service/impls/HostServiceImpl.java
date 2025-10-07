@@ -34,7 +34,6 @@ public class HostServiceImpl implements HostService {
     private final HostRepository hostRepository;
     private final HostMapper hostMapper;
     private final UserRepository userRepository;
-    private final UserMapper userMapper;
     private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper accommodationMapper;
     private final ReserveRepository reserveRepository;
