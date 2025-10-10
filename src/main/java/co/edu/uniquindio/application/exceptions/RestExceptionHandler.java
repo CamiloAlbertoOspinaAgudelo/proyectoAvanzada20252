@@ -57,4 +57,9 @@ public class RestExceptionHandler {
     public ResponseEntity<ResponseDTO<String>> handleBadRequestException(BadRequestException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( new ResponseDTO<>(true, ex.getMessage()) );
     }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ResponseDTO<String>> notFoundException(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body( new ResponseDTO<>(true, ex.getMessage()) );
+    }
 }

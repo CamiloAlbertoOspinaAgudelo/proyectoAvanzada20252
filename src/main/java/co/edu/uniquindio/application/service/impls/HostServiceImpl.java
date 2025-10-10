@@ -114,8 +114,10 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public List<ReserveDTO> listReserves(Long id, String city, ReserveStatus status, LocalDateTime checkIn, LocalDateTime checkOut, int page) throws Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
         Pageable pageable = PageRequest.of(page, 10);
-        Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Host_Id(id, city, status, checkIn, checkOut, pageable);
+        Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Host_Id(host.getId(), city, status, checkIn, checkOut, pageable);
 
         return  reservations.getContent().stream().map(reserveMapper::toReserveDTO).toList();
     }

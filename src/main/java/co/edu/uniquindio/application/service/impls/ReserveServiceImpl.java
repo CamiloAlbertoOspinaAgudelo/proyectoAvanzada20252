@@ -5,12 +5,16 @@ import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.mappers.ReserveMapper;
 import co.edu.uniquindio.application.model.entity.Reservation;
+import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
 import co.edu.uniquindio.application.service.interfaces.EmailService;
 import co.edu.uniquindio.application.service.interfaces.ReserveService;
+import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,20 +28,27 @@ public class ReserveServiceImpl implements ReserveService {
     private final ReserveRepository reserveRepository;
     private final ReserveMapper reserveMapper;
     private final EmailService emailService;
+    private final UserService userService;
 
     @Override
     public void create(CreateReserveDTO reserveDTO) throws Exception{
+        User user = userService.getAuthenticatedUser();
         Reservation newReserve = reserveMapper.toEntity(reserveDTO);
+        newReserve.setUser(user);
         reserveRepository.save(newReserve);
     }
+
     @Override
-    public List<ReserveDTO> listAll(){
-        return reserveRepository.findAll().stream().map(reserveMapper::toReserveDTO).toList();
+    public List<ReserveDTO> listAll() throws Exception{
+        User user = userService.getAuthenticatedUser();
+        Pageable pageable = PageRequest.of(0, 10);
+        return reserveRepository.findAllByUser_Id(user.getId(), pageable).stream().map(reserveMapper::toReserveDTO).toList();
     }
 
     @Override
     public ReserveDTO get(Long id) throws Exception{
-        Optional<Reservation> reservation = reserveRepository.findById(id);
+        User user = userService.getAuthenticatedUser();
+        Optional<Reservation> reservation = reserveRepository.findByIdAndUser_Id(id, user.getId());
         if (reservation.isEmpty()){
             throw new Exception("Reserva no encontrada.");
         }
@@ -46,7 +57,8 @@ public class ReserveServiceImpl implements ReserveService {
 
     @Override
     public void cancel(Long id) throws Exception{
-        Optional<Reservation> reservationOptional = reserveRepository.findById(id);
+        User user = userService.getAuthenticatedUser();
+        Optional<Reservation> reservationOptional = reserveRepository.findByIdAndUser_Id(id, user.getId());
         if (reservationOptional.isEmpty()){
             throw new Exception("Reserva no encontrada.");
         }
@@ -56,8 +68,6 @@ public class ReserveServiceImpl implements ReserveService {
 
     @Override
     public void sendReminder() throws Exception {
-        LocalDate today = LocalDate.now();
-
         List<Reservation> reservations = reserveRepository.findAllByStatus(ReserveStatus.PENDING);
 
         for (Reservation reservation: reservations){

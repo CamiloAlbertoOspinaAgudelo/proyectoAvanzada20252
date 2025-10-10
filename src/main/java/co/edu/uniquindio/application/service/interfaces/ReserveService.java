@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ReserveService {
     void create(CreateReserveDTO reserveDTO) throws Exception;
-    List<ReserveDTO> listAll();
+    List<ReserveDTO> listAll() throws  Exception;
     ReserveDTO get(Long id) throws Exception;
     void cancel(Long id) throws Exception;
     void sendReminder() throws Exception;

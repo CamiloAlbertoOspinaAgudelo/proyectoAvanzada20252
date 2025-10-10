@@ -16,6 +16,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReserveRepository extends JpaRepository<Reservation, Long> {
@@ -41,4 +42,13 @@ public interface ReserveRepository extends JpaRepository<Reservation, Long> {
             "and (:status is null or :status = r.status)")
     Page<Reservation> findAllByAccommodation_Id(Long id, LocalDateTime from, LocalDateTime to, ReserveStatus status, Pageable pageable);
 
+    Page<Reservation> findAllByUser_Id(Long id, Pageable pageable);
+
+    @Query("select r from Reservation r where r.id = :id " +
+            "and (r.user.id = :userId)")
+    Optional<Reservation> findByIdAndUser_Id(Long id, Long userId);
+
+    @Query ("select r from Reservation r where r.user.id = :id " +
+            "and (r.accommodation.id = :placeId)")
+    Optional<Reservation> findReviewable(Long id, Long placeId);
 }
