@@ -26,7 +26,7 @@ public class Accommodation {
     @Embedded
     private Address address;
     @Column(nullable = false)
-    private double PriceNight;
+    private double priceNight;
     @Column(nullable = false)
     private int capMax;
     @ElementCollection

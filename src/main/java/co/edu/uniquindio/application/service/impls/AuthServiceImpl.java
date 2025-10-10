@@ -52,4 +52,5 @@ public class AuthServiceImpl implements AuthService {
                 "role", "ROLE_"+user.getRol().name()
         );
     }
+
 }

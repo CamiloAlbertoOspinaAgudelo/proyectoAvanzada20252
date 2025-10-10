@@ -4,6 +4,7 @@ import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.user.*;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.service.interfaces.HostService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -46,18 +48,18 @@ public class HostController {
 
     // listar alojamientos del host
     @GetMapping("/{id}/accommodations")
-    public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> getAccommodations(@PathVariable Long id) throws Exception{
-        List<AccommodationDTO> places = hostService.getPlaces(id);
+    public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> getAccommodations(@PathVariable Long id, @RequestParam int page) throws Exception{
+        List<AccommodationDTO> places = hostService.getPlaces(id, page);
         return ResponseEntity.ok(new ResponseDTO<>(false, places));
     }
 
     // Listar las reservas de un alojamiento
     @GetMapping("/{id}/accomodations/reserves")
-    public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listReserves(@PathVariable Long id,
-            @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
-            @RequestParam(required = false) String city, @RequestParam(required = false) String status,
-            @RequestParam(required = false) String checkIn, @RequestParam(required = false) String checkOut) throws Exception {
-        List<ReserveDTO> list = hostService.listReserves(id);
+    public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listReserves(
+            @PathVariable Long id, @RequestParam int page, @RequestParam(required = false) String city,
+            @RequestParam(required = false) ReserveStatus status, @RequestParam(required = false) LocalDateTime checkIn,
+            @RequestParam(required = false) LocalDateTime checkOut) throws Exception {
+        List<ReserveDTO> list = hostService.listReserves(id, city, status, checkIn, checkOut, page);
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 }

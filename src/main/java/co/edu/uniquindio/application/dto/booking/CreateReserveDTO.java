@@ -9,7 +9,6 @@ public record CreateReserveDTO(
         @NotNull Long accomodationId,
         @NotNull LocalDateTime checkIn,
         @NotNull LocalDateTime checkOut,
-        @NotNull int guests,
-        @NotNull Status status
+        @NotNull int guests
         ) {
 }

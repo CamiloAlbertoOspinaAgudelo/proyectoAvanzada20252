@@ -4,17 +4,23 @@ import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.CreateAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.EditAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.MetricsDTO;
+import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.review.ReviewDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.HostDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
 import co.edu.uniquindio.application.mappers.*;
 import co.edu.uniquindio.application.model.entity.*;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.*;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
 import co.edu.uniquindio.application.service.interfaces.ReserveService;
+import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -34,18 +40,21 @@ public class AccommodationServiceImpl implements AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final AccommodationMapper placeMapper;
     private final AddressMapper addressMapper;
-    private final HostMapper hostMapper;
-    private final HostRepository hostRepository;
     private final ReserveRepository reserveRepository;
+    private final ReserveMapper reserveMapper;
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
+    private final UserService userService;
+    private final HostRepository hostRepository;
 
     @Override
     public void create(CreateAccommodationDTO accommodationDTO) throws Exception{
 
-        HostDTO authenticatedHost = getAuthenticatedHost();
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
 
         Accommodation newPlace = placeMapper.toEntity(accommodationDTO);
+        newPlace.setHost(host); //Se asigna el alojamiento a un host_id
 
         accommodationRepository.save(newPlace);
     }
@@ -93,8 +102,12 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public List<AccommodationDTO> listAll(){
-        return accommodationRepository.findAll().stream().map(placeMapper::toAccommodationDTO).toList();
+    public List<AccommodationDTO> listAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, double priceMin, double priceMax, List<co.edu.uniquindio.application.model.enums.Service> services, int page){
+
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Accommodation> list = accommodationRepository.findAll(city, dateIn, dateOut, priceMin, priceMax, services, pageable);
+
+        return list.getContent().stream().map(placeMapper::toAccommodationDTO).toList();
     }
 
     @Override
@@ -103,21 +116,19 @@ public class AccommodationServiceImpl implements AccommodationService {
     }
 
     @Override
-    public List<ReviewDTO> getReviews(Long id) throws Exception{
-        List<Review> reviews = reviewRepository.findByAccommodation_ID(id);
-        List<ReviewDTO> reviewDTOs = new ArrayList<>();
-        for (Review review : reviews) {
-            reviewDTOs.add(reviewMapper.toReviewDTO(review));
-        }
-        return reviewDTOs;
+    public List<ReviewDTO> getReviews(Long id, int page) throws Exception{
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Review> reviews = reviewRepository.findAllByAccommodation_Id(id, pageable);
+
+        return reviews.getContent().stream().map(reviewMapper::toReviewDTO).toList();
     }
 
-    public HostDTO getAuthenticatedHost() throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long idUser = Long.parseLong(userDetails.getUsername());
-        HostProfile host = hostRepository.findByUserId(idUser)
-                .orElseThrow(() -> new Exception("No se encontró un host asociado al usuario autenticado."));
-        return hostMapper.toHostDTO(host);
+    @Override
+    public List<ReserveDTO> getReserves(Long id, LocalDateTime from, LocalDateTime to, ReserveStatus status, int page) throws Exception{
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Id(id, from, to, status, pageable);
+
+        return  reservations.getContent().stream().map(reserveMapper::toReserveDTO).toList();
     }
 
 }

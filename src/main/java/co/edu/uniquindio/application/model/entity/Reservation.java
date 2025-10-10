@@ -1,5 +1,6 @@
 package co.edu.uniquindio.application.model.entity;
 
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +24,7 @@ public class Reservation {
     @Column(nullable = false)
     private int guests;
     @Column(nullable = false)
-    private Status status;
+    private ReserveStatus status;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Accommodation accommodation;

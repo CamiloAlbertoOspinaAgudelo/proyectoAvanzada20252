@@ -5,6 +5,7 @@ import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.mappers.ReserveMapper;
 import co.edu.uniquindio.application.model.entity.Reservation;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
 import co.edu.uniquindio.application.service.interfaces.EmailService;
@@ -50,13 +51,14 @@ public class ReserveServiceImpl implements ReserveService {
             throw new Exception("Reserva no encontrada.");
         }
         Reservation reservation = reservationOptional.get();
-        reservation.setStatus(Status.INACTIVE);
+        reservation.setStatus(ReserveStatus.CANCELLED);
     }
 
+    @Override
     public void sendReminder() throws Exception {
         LocalDate today = LocalDate.now();
 
-        List<Reservation> reservations = reserveRepository.findAllByStatus(Status.ACTIVE);
+        List<Reservation> reservations = reserveRepository.findAllByStatus(ReserveStatus.PENDING);
 
         for (Reservation reservation: reservations){
             if (reservation.getDateFrom().isBefore(LocalDateTime.now().plusHours(48))){

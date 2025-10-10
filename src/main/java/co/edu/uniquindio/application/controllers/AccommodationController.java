@@ -4,8 +4,12 @@ import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.CreateAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.EditAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.MetricsDTO;
+import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
 import co.edu.uniquindio.application.dto.review.ReviewDTO;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
+import co.edu.uniquindio.application.model.enums.Service;
+import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +37,11 @@ public class AccommodationController {
     // buscar alojamiento
     @GetMapping
     public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> listAll(
-            @RequestParam(required = false) String city, @RequestParam(required = false) LocalDate dateIn,
-            @RequestParam(required = false) LocalDate dateOut, @RequestParam(required = false) double priceMin,
-            @RequestParam(required = false) double priceOut, @RequestParam(required = false)
-            String[] services, @RequestParam int page, @RequestParam int size) throws Exception{
-        List<AccommodationDTO> list = accommodationService.listAll();
+            @RequestParam(required = false) String city, @RequestParam(required = false) LocalDateTime dateIn,
+            @RequestParam(required = false) LocalDateTime dateOut, @RequestParam(required = false) double priceMin,
+            @RequestParam(required = false) double priceMax, @RequestParam(required = false)
+            List<Service> services, @RequestParam int page) throws Exception{
+        List<AccommodationDTO> list = accommodationService.listAll(city, dateIn, dateOut, priceMin, priceMax, services, page);
         return ResponseEntity.ok(new ResponseDTO<>(false, list));
     }
 
@@ -81,8 +85,12 @@ public class AccommodationController {
 
     //obtener comentarios del alojamiento
     @GetMapping("/{id}/reviews")
-    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable Long id) throws Exception{
-        accommodationService.getReviews(id);
-        return ResponseEntity.ok(new ResponseDTO<>(false, null));
+    public ResponseEntity<ResponseDTO<List<ReviewDTO>>> getReviews(@PathVariable Long id, @RequestParam int page) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, accommodationService.getReviews(id, page)));
+    }
+
+    @GetMapping("/{id}/reseves")
+    public ResponseEntity<ResponseDTO<List<ReserveDTO>>> getReserves(@PathVariable Long id, @RequestParam(required = false) LocalDateTime to, @RequestParam(required = false) LocalDateTime from, @RequestParam(required = false) ReserveStatus status, @RequestParam int page) throws Exception{
+        return ResponseEntity.ok(new ResponseDTO<>(false, accommodationService.getReserves(id, from, to, status, page)));
     }
 }

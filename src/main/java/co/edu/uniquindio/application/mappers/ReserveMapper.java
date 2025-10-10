@@ -9,6 +9,7 @@ import org.mapstruct.MappingConstants;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface ReserveMapper {
+    @Mapping(target = "status", constant = "PENDING")
     Reservation toEntity(CreateReserveDTO reserveDTO);
     ReserveDTO toReserveDTO(Reservation reservation);
 }

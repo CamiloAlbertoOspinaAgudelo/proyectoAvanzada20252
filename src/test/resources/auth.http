@@ -9,12 +9,21 @@ Content-Type: application/json
   "rol": "USER"
 }
 
-###
+### error
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "pepito@gmail.com",
+  "email": "juanito@gmail.com",
+  "password": "111"
+}
+
+### exito
+POST http://localhost:8080/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "juanito@gmail.com",
   "password": "12345678"
 }
 > {% client.global.set("auth_token", response.body.msg.token); %}

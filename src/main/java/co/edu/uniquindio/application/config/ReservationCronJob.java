@@ -10,11 +10,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class ReservationCronJob {
     private final ReserveService reservationService;
-    private final ReserveServiceImpl reserveServiceImpl;
 
     @Scheduled(cron = "0 0 0 * * *")
     public void updateExpiredReservations() throws Exception {
         System.out.println("⏰ Ejecutando cron job: actualizar reservas vencidas...");
-        reserveServiceImpl.sendReminder();
+        reservationService.sendReminder();
     }
 }

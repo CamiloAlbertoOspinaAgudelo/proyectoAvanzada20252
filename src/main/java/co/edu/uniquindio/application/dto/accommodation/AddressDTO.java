@@ -2,7 +2,7 @@ package co.edu.uniquindio.application.dto.accommodation;
 
 public record AddressDTO(
         String city,
-        String address,
+        String direction,
         LocationDTO location
 ) {
 }

@@ -43,59 +43,35 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDTO get(Long id) throws Exception{
-        UserDTO authenticatedUser = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
 
-        // Recuperación del usuario
-        Optional<User> userOpt = userRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (userOpt.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
-        }
-
-        if (!authenticatedUser.id().equals(id)) {
+        if (!id.equals(user.getId())) {
             throw new Exception("No tienes permiso para ver este usuario.");
         }
 
-        return userMapper.toUserDTO(userOpt.get());
+        return userMapper.toUserDTO(user);
     }
 
     @Override
     public void delete(Long id) throws Exception {
-        UserDTO authenticatedUser = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
 
-        // Recuperación del usuario
-        Optional<User> user = userRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (user.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
+        if (!id.equals(user.getId())) {
+            throw new Exception("No tienes permiso para ver este usuario.");
         }
 
-        if (!authenticatedUser.id().equals(id)) {
-            throw new Exception("No tienes permiso para eliminar este usuario.");
-        }
-
-        userRepository.delete(user.get());
+        userRepository.delete(user);
     }
 
     @Override
     public void update(Long id, EditUserDTO userDTO) throws Exception{
-        UserDTO authenticatedUser = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
 
-        // Recuperación del usuario
-        Optional<User> user = userRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (user.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
+        if (!id.equals(user.getId())) {
+            throw new Exception("No tienes permiso para ver este usuario.");
         }
 
-        if (!authenticatedUser.id().equals(id)) {
-            throw new Exception("No tienes permiso para modificar este usuario.");
-        }
-
-        User newUser = user.get();
+        User newUser = user;
         newUser.setName(userDTO.name());
         newUser.setPhone(userDTO.phone());
         newUser.setDateBirth(userDTO.dateBirth());
@@ -106,21 +82,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changePassword(Long id, String oldPassword, String newPassword) throws Exception{
-        UserDTO authenticatedUser = getAuthenticatedUser();
+        User user = getAuthenticatedUser();
 
-        // Recuperación del usuario
-        Optional<User> userOpt = userRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (userOpt.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
+        if (!id.equals(user.getId())) {
+            throw new Exception("No tienes permiso para ver este usuario.");
         }
-
-        if (!authenticatedUser.id().equals(id)) {
-            throw new Exception("No tienes permiso para modificar este usuario.");
-        }
-
-        User user = userOpt.get();
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new Exception("La contraseña no es correcta.");
@@ -139,11 +105,11 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    public UserDTO getAuthenticatedUser() throws Exception {
+    @Override
+    public User getAuthenticatedUser() throws Exception {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long idUser = Long.parseLong(userDetails.getUsername());
-        User user = userRepository.findById(idUser)
+        return userRepository.findById(idUser)
                 .orElseThrow(() -> new Exception("Usuario autenticado no encontrado."));
-        return userMapper.toUserDTO(user);
     }
 }

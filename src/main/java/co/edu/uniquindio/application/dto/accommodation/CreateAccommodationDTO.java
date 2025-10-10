@@ -11,7 +11,7 @@ import java.util.Set;
 
 public record CreateAccommodationDTO(
         @NotBlank String title,
-        @Length(max = 300) String description,
+        @NotBlank @Length(max = 300) String description,
         @NotNull AddressDTO address,
         @NotNull double priceNight,
         @NotNull @Min(1) int capMax,

@@ -10,4 +10,5 @@ public interface ReserveService {
     List<ReserveDTO> listAll();
     ReserveDTO get(Long id) throws Exception;
     void cancel(Long id) throws Exception;
+    void sendReminder() throws Exception;
 }

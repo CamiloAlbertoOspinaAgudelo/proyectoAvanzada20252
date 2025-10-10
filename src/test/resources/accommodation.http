@@ -1,0 +1,19 @@
+POST http://localhost:8080/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Casa",
+  "description": "Hola",
+  "address": {
+    "city": "Armenia",
+    "direction": "Carrera 15",
+    "location": {
+      "lat": 123,
+      "lng": 123
+    }
+  },
+  "priceNight": 120000.00,
+  "capMax": 4,
+  "services": ["WIFI"]
+}

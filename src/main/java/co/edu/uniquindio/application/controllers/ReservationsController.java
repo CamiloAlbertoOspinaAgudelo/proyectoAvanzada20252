@@ -4,6 +4,7 @@ package co.edu.uniquindio.application.controllers;
 import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,10 +34,9 @@ public class ReservationsController {
     @GetMapping
     public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listAll(
             @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
-            @RequestParam(required = false) String city, @RequestParam(required = false) /*ReserveStatus*/String status,
-            @RequestParam(required = false) /*LocalDateTime*/String checkIn, @RequestParam(required = false) /*LocalDateTime*/String checkOut) throws Exception {
-        List<ReserveDTO> list = reserveService.listAll();
-        return ResponseEntity.ok(new ResponseDTO<>(false, list));
+            @RequestParam(required = false) String city, @RequestParam(required = false) ReserveStatus status,
+            @RequestParam(required = false) LocalDateTime checkIn, @RequestParam(required = false) LocalDateTime checkOut) throws Exception {
+        return ResponseEntity.ok(new ResponseDTO<>(false, reserveService.listAll()));
     }
 
     //obtener detalle reserva

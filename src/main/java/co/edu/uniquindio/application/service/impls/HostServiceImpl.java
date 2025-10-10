@@ -12,17 +12,23 @@ import co.edu.uniquindio.application.model.entity.Accommodation;
 import co.edu.uniquindio.application.model.entity.HostProfile;
 import co.edu.uniquindio.application.model.entity.Reservation;
 import co.edu.uniquindio.application.model.entity.User;
+import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.repositories.AccommodationRepository;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
 import co.edu.uniquindio.application.repositories.HostRepository;
 import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.service.interfaces.HostService;
+import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,6 +45,7 @@ public class HostServiceImpl implements HostService {
     private final ReserveRepository reserveRepository;
     private final ReserveMapper reserveMapper;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
 
     @Override
     public void create(CreateHostDTO hostDTO) throws Exception{
@@ -65,103 +72,52 @@ public class HostServiceImpl implements HostService {
 
     @Override
     public HostDTO get(Long id) throws Exception{
-        HostDTO authenticatedHost = getAuthenticatedHost();
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
 
-        // Recuperación del usuario
-        Optional<HostProfile> hostOpt = hostRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (hostOpt.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
-        }
-
-        if (!authenticatedHost.id().equals(id)) {
-            throw new Exception("No tienes permiso para ver este usuario.");
-        }
-
-        return hostMapper.toHostDTO(hostOpt.get());
+        return hostMapper.toHostDTO(host);
     }
 
     @Override
     public void update(Long id, EditHostDTO hostDTO) throws Exception{
-        HostDTO hostAuth = getAuthenticatedHost();
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
 
-        // Recuperación del usuario
-        Optional<HostProfile> hostOpt = hostRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (hostOpt.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
-        }
-
-        if (!hostAuth.id().equals(id)) {
-            throw new Exception("No tienes permiso para modificar este usuario.");
-        }
-
-        User user = hostOpt.get().getUser();
         user.setName(hostDTO.name());
         user.setPhone(hostDTO.phone());
         user.setDateBirth(hostDTO.dateBirth());
         user.setPhotoUrl(hostDTO.photoUrl());
-        hostOpt.get().setDescription(hostDTO.description());
-        hostOpt.get().setDocuments(hostDTO.documents());
+        host.setDescription(hostDTO.description());
+        host.setDocuments(hostDTO.documents());
 
         userRepository.save(user);
-        hostRepository.save(hostOpt.get());
+        hostRepository.save(host);
     }
 
     @Override
     public void delete(Long id) throws Exception {
-        HostDTO hostAuth = getAuthenticatedHost();
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
 
-        // Recuperación del usuario
-        Optional<HostProfile> host = hostRepository.findById(id);
-
-        // Si el usuario no existe, lanzar una excepción
-        if (host.isEmpty()) {
-            throw new Exception("Usuario no encontrado.");
-        }
-
-        if (!hostAuth.id().equals(id)) {
-            throw new Exception("No tienes permiso para eliminar este usuario.");
-        }
-
-        hostRepository.delete(host.get());
+        hostRepository.delete(host);
     }
 
     @Override
-    public List<AccommodationDTO> getPlaces(Long id) throws  Exception{
-        HostDTO hostAuth = getAuthenticatedHost();
-        List<Accommodation> places = accommodationRepository.findByHost_Id(hostAuth.id());
+    public List<AccommodationDTO> getPlaces(Long id, int page) throws  Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Accommodation> places = accommodationRepository.findByHost_Id(host.getId(), pageable);
 
-        return places.stream()
-                .map(accommodationMapper::toAccommodationDTO)
-                .toList();
+        return places.getContent().stream().map(accommodationMapper::toAccommodationDTO).toList();
     }
 
     @Override
-    public List<ReserveDTO> listReserves(Long id) throws Exception{
-        HostDTO hostAuth = getAuthenticatedHost();
-        List<Reservation> reservations = reserveRepository.findAllByAccommodation_Host_Id(hostAuth.id());
+    public List<ReserveDTO> listReserves(Long id, String city, ReserveStatus status, LocalDateTime checkIn, LocalDateTime checkOut, int page) throws Exception{
+        Pageable pageable = PageRequest.of(page, 10);
+        Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Host_Id(id, city, status, checkIn, checkOut, pageable);
 
-        if (!hostAuth.id().equals(id)){
-            throw new Exception("El host no esta autorizado.");
-        }
-        if (reservations.isEmpty()) {
-            throw new Exception("El host no tiene reservas registradas.");
-        }
-
-        return  reservations.stream()
-                .map(reserveMapper::toReserveDTO)
-                .toList();
-    }
-
-    public HostDTO getAuthenticatedHost() throws Exception {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Long idUser = Long.parseLong(userDetails.getUsername());
-        HostProfile host = hostRepository.findByUserId(idUser)
-                .orElseThrow(() -> new Exception("No se encontró un host asociado al usuario autenticado."));
-        return hostMapper.toHostDTO(host);
+        return  reservations.getContent().stream().map(reserveMapper::toReserveDTO).toList();
     }
 
     public boolean emailExist(String email){

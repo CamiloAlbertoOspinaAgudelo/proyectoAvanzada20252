@@ -42,4 +42,19 @@ public class RestExceptionHandler {
     public ResponseEntity<ResponseDTO<String>> handleValueConflictException(ValueConflictException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body( new ResponseDTO<>(true, ex.getMessage()) );
     }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public  ResponseEntity<ResponseDTO<String>> handleunauthorizedExeption( UnauthorizedException ex ){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body( new ResponseDTO<>(true, ex.getMessage()) );
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public  ResponseEntity<ResponseDTO<String>> handleunauthorizedExeption( ForbiddenException ex ){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body( new ResponseDTO<>(true, ex.getMessage()) );
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ResponseDTO<String>> handleBadRequestException(BadRequestException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body( new ResponseDTO<>(true, ex.getMessage()) );
+    }
 }
