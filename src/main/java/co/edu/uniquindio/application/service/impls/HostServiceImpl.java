@@ -3,6 +3,7 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.user.*;
+import co.edu.uniquindio.application.exceptions.UnauthorizedException;
 import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.AccommodationMapper;
 import co.edu.uniquindio.application.mappers.HostMapper;
@@ -73,7 +74,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public HostDTO get(Long id) throws Exception{
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
         return hostMapper.toHostDTO(host);
     }
@@ -81,7 +82,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public void update(Long id, EditHostDTO hostDTO) throws Exception{
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
         user.setName(hostDTO.name());
         user.setPhone(hostDTO.phone());
@@ -97,7 +98,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public void delete(Long id) throws Exception {
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
         hostRepository.delete(host);
     }
@@ -105,7 +106,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<AccommodationDTO> getPlaces(Long id, int page) throws  Exception{
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
         Pageable pageable = PageRequest.of(page, 10);
         Page<Accommodation> places = accommodationRepository.findByHost_Id(host.getId(), pageable);
 
@@ -115,7 +116,7 @@ public class HostServiceImpl implements HostService {
     @Override
     public List<ReserveDTO> listReserves(Long id, String city, ReserveStatus status, LocalDateTime checkIn, LocalDateTime checkOut, int page) throws Exception{
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
         Pageable pageable = PageRequest.of(page, 10);
         Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Host_Id(host.getId(), city, status, checkIn, checkOut, pageable);
 

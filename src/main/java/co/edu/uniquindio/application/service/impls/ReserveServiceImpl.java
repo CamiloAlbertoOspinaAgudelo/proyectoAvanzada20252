@@ -3,12 +3,17 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.EmailDTO;
 import co.edu.uniquindio.application.dto.booking.CreateReserveDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
+import co.edu.uniquindio.application.exceptions.BadRequestException;
+import co.edu.uniquindio.application.exceptions.NotFoundException;
+import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.ReserveMapper;
 import co.edu.uniquindio.application.model.entity.Reservation;
 import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
+import co.edu.uniquindio.application.repositories.AccommodationRepository;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
+import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.service.interfaces.EmailService;
 import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import co.edu.uniquindio.application.service.interfaces.UserService;
@@ -29,11 +34,26 @@ public class ReserveServiceImpl implements ReserveService {
     private final ReserveMapper reserveMapper;
     private final EmailService emailService;
     private final UserService userService;
+    private final AccommodationRepository accommodationRepository;
+    private final UserRepository userRepository;
 
     @Override
     public void create(CreateReserveDTO reserveDTO) throws Exception{
         User user = userService.getAuthenticatedUser();
         Reservation newReserve = reserveMapper.toEntity(reserveDTO);
+
+        if (newReserve.getDateFrom().isBefore(newReserve.getDateTo()) | newReserve.getDateFrom().isBefore(LocalDateTime.now())) {
+            throw new BadRequestException("La fecha no es valida");
+        }
+
+        if (reserveRepository.existsOverlappingReserve(reserveDTO.accomodationId(), reserveDTO.checkIn(), reserveDTO.checkOut())){
+            throw new ValueConflictException("El alojamiento esta ocupado en la fecha seleccionada");
+        }
+
+        if (accommodationRepository.findById(reserveDTO.accomodationId()).isEmpty()){
+            throw new NotFoundException("El alojamiento no existe");
+        }
+
         newReserve.setUser(user);
         reserveRepository.save(newReserve);
     }
@@ -50,7 +70,7 @@ public class ReserveServiceImpl implements ReserveService {
         User user = userService.getAuthenticatedUser();
         Optional<Reservation> reservation = reserveRepository.findByIdAndUser_Id(id, user.getId());
         if (reservation.isEmpty()){
-            throw new Exception("Reserva no encontrada.");
+            throw new NotFoundException("Reserva no encontrada.");
         }
         return reserveMapper.toReserveDTO(reservation.get());
     }
@@ -60,7 +80,7 @@ public class ReserveServiceImpl implements ReserveService {
         User user = userService.getAuthenticatedUser();
         Optional<Reservation> reservationOptional = reserveRepository.findByIdAndUser_Id(id, user.getId());
         if (reservationOptional.isEmpty()){
-            throw new Exception("Reserva no encontrada.");
+            throw new NotFoundException("Reserva no encontrada.");
         }
         Reservation reservation = reservationOptional.get();
         reservation.setStatus(ReserveStatus.CANCELLED);

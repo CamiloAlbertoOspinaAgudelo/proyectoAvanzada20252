@@ -3,6 +3,9 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
+import co.edu.uniquindio.application.exceptions.ForbiddenException;
+import co.edu.uniquindio.application.exceptions.NotFoundException;
+import co.edu.uniquindio.application.exceptions.UnauthorizedException;
 import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.UserMapper;
 import co.edu.uniquindio.application.model.entity.User;
@@ -46,7 +49,7 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new Exception("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
         }
 
         return userMapper.toUserDTO(user);
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new Exception("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
         }
 
         userRepository.delete(user);
@@ -68,16 +71,19 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new Exception("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
         }
 
-        User newUser = user;
-        newUser.setName(userDTO.name());
-        newUser.setPhone(userDTO.phone());
-        newUser.setDateBirth(userDTO.dateBirth());
-        newUser.setPhotoUrl(userDTO.photoUrl());
+        if (userDTO.name().isEmpty()){
+            throw new ForbiddenException("Necesita el nombre");
+        }
 
-        userRepository.save(newUser);
+        user.setName(userDTO.name());
+        user.setPhone(userDTO.phone());
+        user.setDateBirth(userDTO.dateBirth());
+        user.setPhotoUrl(userDTO.photoUrl());
+
+        userRepository.save(user);
     }
 
     @Override
@@ -85,16 +91,16 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new Exception("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
         }
 
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new Exception("La contraseña no es correcta.");
+            throw new ValueConflictException("La contraseña no es correcta.");
         }
 
         // Verificar que la nueva contraseña no sea igual a la anterior
         if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new Exception("La nueva contraseña no puede ser igual a la anterior.");
+            throw new UnauthorizedException("La nueva contraseña no puede ser igual a la anterior.");
         }
 
         user.setPassword(passwordEncoder.encode(newPassword));
@@ -110,6 +116,6 @@ public class UserServiceImpl implements UserService {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Long idUser = Long.parseLong(userDetails.getUsername());
         return userRepository.findById(idUser)
-                .orElseThrow(() -> new Exception("Usuario autenticado no encontrado."));
+                .orElseThrow(() -> new NotFoundException("Usuario autenticado no encontrado."));
     }
 }

@@ -6,32 +6,24 @@ import co.edu.uniquindio.application.dto.accommodation.EditAccommodationDTO;
 import co.edu.uniquindio.application.dto.accommodation.MetricsDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.review.ReviewDTO;
-import co.edu.uniquindio.application.dto.user.EditUserDTO;
-import co.edu.uniquindio.application.dto.user.HostDTO;
-import co.edu.uniquindio.application.dto.user.UserDTO;
+import co.edu.uniquindio.application.exceptions.NotFoundException;
+import co.edu.uniquindio.application.exceptions.UnauthorizedException;
 import co.edu.uniquindio.application.mappers.*;
 import co.edu.uniquindio.application.model.entity.*;
 import co.edu.uniquindio.application.model.enums.ReserveStatus;
 import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.*;
 import co.edu.uniquindio.application.service.interfaces.AccommodationService;
-import co.edu.uniquindio.application.service.interfaces.ReserveService;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -51,7 +43,7 @@ public class AccommodationServiceImpl implements AccommodationService {
     public void create(CreateAccommodationDTO accommodationDTO) throws Exception{
 
         User user = userService.getAuthenticatedUser();
-        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new Exception("Usted no es un host"));
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
         Accommodation newPlace = placeMapper.toEntity(accommodationDTO);
         newPlace.setHost(host); //Se asigna el alojamiento a un host_id
@@ -64,7 +56,7 @@ public class AccommodationServiceImpl implements AccommodationService {
         Optional<Accommodation> place = accommodationRepository.findById(id);
 
         if (place.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
+            throw new NotFoundException("Alojamiento no encontrado.");
         }
 
         return placeMapper.toAccommodationDTO(place.get());
@@ -72,10 +64,15 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public void update(Long id, EditAccommodationDTO accommodationDTO) throws Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
         Optional<Accommodation> placeOption = accommodationRepository.findById(id);
 
         if (placeOption.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
+            throw new NotFoundException("Alojamiento no encontrado.");
+        }
+        if (!host.getId().equals(placeOption.get().getHost().getId())) {
+            throw new UnauthorizedException("Usted no es el host de este alojamiento");
         }
         Address address = addressMapper.toEntity(accommodationDTO.address());
         Accommodation place = placeOption.get();
@@ -90,10 +87,15 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public void delete(Long id) throws Exception {
+        User user = userService.getAuthenticatedUser();
+        HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
         Optional<Accommodation> placeOpt = accommodationRepository.findById(id);
 
         if (placeOpt.isEmpty()) {
-            throw new Exception("Alojamiento no encontrado.");
+            throw new NotFoundException("Alojamiento no encontrado.");
+        }
+        if (!host.getId().equals(placeOpt.get().getHost().getId())) {
+            throw new UnauthorizedException("Usted no es el host de este alojamiento");
         }
 
         Accommodation place = placeOpt.get();
@@ -112,11 +114,24 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public MetricsDTO getMetrics(Long id, LocalDateTime from, LocalDateTime to) throws Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile hostAuth = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
+        HostProfile host = hostRepository.findByAccommodation_Id(id);
+        if (!host.equals(hostAuth)){
+            throw new UnauthorizedException("Usted no es el host de este alojamiento");
+        }
         return reserveRepository.getMetrics(id, from, to);
     }
 
     @Override
     public List<ReviewDTO> getReviews(Long id, int page) throws Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile hostAuth = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
+        HostProfile host = hostRepository.findByAccommodation_Id(id);
+        if (!host.equals(hostAuth)){
+            throw new UnauthorizedException("Usted no es el host de este alojamiento");
+        }
+
         Pageable pageable = PageRequest.of(page, 10);
         Page<Review> reviews = reviewRepository.findAllByAccommodation_Id(id, pageable);
 
@@ -125,6 +140,13 @@ public class AccommodationServiceImpl implements AccommodationService {
 
     @Override
     public List<ReserveDTO> getReserves(Long id, LocalDateTime from, LocalDateTime to, ReserveStatus status, int page) throws Exception{
+        User user = userService.getAuthenticatedUser();
+        HostProfile hostAuth = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
+        HostProfile host = hostRepository.findByAccommodation_Id(id);
+        if (!host.equals(hostAuth)){
+            throw new UnauthorizedException("Usted no es el host de este alojamiento");
+        }
+
         Pageable pageable = PageRequest.of(page, 10);
         Page<Reservation> reservations = reserveRepository.findAllByAccommodation_Id(id, from, to, status, pageable);
 

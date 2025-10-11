@@ -3,6 +3,9 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.EmailDTO;
 import co.edu.uniquindio.application.dto.auth.RecoverDTO;
 import co.edu.uniquindio.application.dto.auth.ResetDTO;
+import co.edu.uniquindio.application.exceptions.ForbiddenException;
+import co.edu.uniquindio.application.exceptions.NotFoundException;
+import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.model.entity.PasswordResetCode;
 import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.repositories.PasswordResetCodeRepository;
@@ -30,7 +33,12 @@ public class PasswordResetServiceImpl implements PasswordResetService {
     @Override
     public void sendCodeReset(RecoverDTO recoverDTO) throws Exception {
 
-        User user = userRepository.findByEmail(recoverDTO.email()).orElseThrow( () -> new Exception("No exisgte el usuario") );
+        User user = userRepository.findByEmail(recoverDTO.email()).orElseThrow( () -> new NotFoundException("No existe el usuario") );
+
+        if (!recoverDTO.email().equals(user.getEmail())) {
+            throw new  ForbiddenException("Usuario no encontrado");
+        }
+
         String code = generateCode();
 
         PasswordResetCode passwordResetCode = new PasswordResetCode();
@@ -52,19 +60,23 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     @Override
     public void resetPassword(ResetDTO resetDTO) throws Exception{
-        User user = userRepository.findByEmail(resetDTO.email()).orElseThrow( () -> new Exception("No exisgte el usuario") );
+        User user = userRepository.findByEmail(resetDTO.email()).orElseThrow( () -> new NotFoundException("No existe el usuario") );
         List<PasswordResetCode> passwordResetCodes = passwordResetCodeRepository.getCodeByUser(user.getId(), Sort.by(Sort.Direction.DESC, "sent"));
 
         if( passwordResetCodes.isEmpty() ){
-            throw new Exception("Usted no ha solicitado restablecer la contraseña");
+            throw new NotFoundException("Usted no ha solicitado restablecer la contraseña");
         }
 
         if( !passwordResetCodes.getFirst().getCode().equals(resetDTO.code()) ){
-            throw new Exception("El codigo es inválido");
+            throw new ForbiddenException("El codigo es inválido");
         }
 
         if( passwordResetCodes.getFirst().getSent().plusMinutes(15).isBefore(LocalDateTime.now()) ){
-            throw new Exception("El codigo ya venció");
+            throw new ForbiddenException("El codigo ya venció");
+        }
+
+        if (resetDTO.password().length() < 8){
+            throw new ValueConflictException("La contraseña debe tener al menos 8 caracteres");
         }
 
         user.setPassword( passwordEncoder.encode( resetDTO.password() ) );

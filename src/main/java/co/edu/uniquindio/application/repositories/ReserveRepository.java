@@ -51,4 +51,16 @@ public interface ReserveRepository extends JpaRepository<Reservation, Long> {
     @Query ("select r from Reservation r where r.user.id = :id " +
             "and (r.accommodation.id = :placeId)")
     Optional<Reservation> findReviewable(Long id, Long placeId);
+
+    @Query("""
+    SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
+    FROM Reservation r
+    WHERE r.accommodation.id = :accommodationId
+      AND r.dateFrom < :checkOut
+      AND r.dateTo > :checkIn
+""")
+    boolean existsOverlappingReserve(
+            @Param("accommodationId") Long accommodationId,
+            @Param("checkIn") LocalDateTime checkIn,
+            @Param("checkOut") LocalDateTime checkOut);
 }
