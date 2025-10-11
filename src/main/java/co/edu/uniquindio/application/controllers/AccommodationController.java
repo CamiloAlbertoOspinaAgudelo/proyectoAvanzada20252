@@ -38,8 +38,8 @@ public class AccommodationController {
     @GetMapping
     public ResponseEntity<ResponseDTO<List<AccommodationDTO>>> listAll(
             @RequestParam(required = false) String city, @RequestParam(required = false) LocalDateTime dateIn,
-            @RequestParam(required = false) LocalDateTime dateOut, @RequestParam(required = false) double priceMin,
-            @RequestParam(required = false) double priceMax, @RequestParam(required = false)
+            @RequestParam(required = false) LocalDateTime dateOut, @RequestParam(required = false) Double priceMin,
+            @RequestParam(required = false) Double priceMax, @RequestParam(required = false)
             List<Service> services, @RequestParam int page) throws Exception{
         List<AccommodationDTO> list = accommodationService.listAll(city, dateIn, dateOut, priceMin, priceMax, services, page);
         return ResponseEntity.ok(new ResponseDTO<>(false, list));

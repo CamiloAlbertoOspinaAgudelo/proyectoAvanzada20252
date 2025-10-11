@@ -14,6 +14,8 @@ import co.edu.uniquindio.application.model.entity.HostProfile;
 import co.edu.uniquindio.application.model.entity.Reservation;
 import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.model.enums.ReserveStatus;
+import co.edu.uniquindio.application.model.enums.Rol;
+import co.edu.uniquindio.application.model.enums.Status;
 import co.edu.uniquindio.application.repositories.AccommodationRepository;
 import co.edu.uniquindio.application.repositories.ReserveRepository;
 import co.edu.uniquindio.application.repositories.HostRepository;
@@ -65,9 +67,13 @@ public class HostServiceImpl implements HostService {
         user.setPhone(hostDTO.phone());
         user.setDateBirth(hostDTO.dateBirth());
         user.setPhotoUrl(hostDTO.photoUrl());
+        user.setRol(Rol.HOST);
+        user.setStatus(Status.ACTIVE);
+        user.setCreatedAt(LocalDateTime.now());
 
         host.setUser(user);
 
+        userRepository.save(user);
         hostRepository.save(host);
     }
 
@@ -100,7 +106,9 @@ public class HostServiceImpl implements HostService {
         User user = userService.getAuthenticatedUser();
         HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
-        hostRepository.delete(host);
+        user.setStatus(Status.INACTIVE);
+        userRepository.save(user);
+        hostRepository.save(host);
     }
 
     @Override
@@ -124,6 +132,6 @@ public class HostServiceImpl implements HostService {
     }
 
     public boolean emailExist(String email){
-        return hostRepository.findByUser_Email(email).isPresent() || userRepository.findByEmail(email).isPresent();
+        return userRepository.findByEmail(email).isPresent();
     }
 }

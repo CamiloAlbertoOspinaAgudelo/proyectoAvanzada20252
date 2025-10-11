@@ -2,6 +2,7 @@ package co.edu.uniquindio.application.service.impls;
 
 import co.edu.uniquindio.application.dto.auth.LogInDTO;
 import co.edu.uniquindio.application.dto.auth.TokenDTO;
+import co.edu.uniquindio.application.exceptions.UnauthorizedException;
 import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.repositories.UserRepository;
 import co.edu.uniquindio.application.security.JWTUtils;
@@ -29,7 +30,7 @@ public class AuthServiceImpl implements AuthService {
         Optional<User> optionalUser = userRepository.findByEmail(loginDTO.email());
 
         if(optionalUser.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Datos incorrectos 1");
+            throw new UnauthorizedException("Datos incorrectos");
         }
 
 

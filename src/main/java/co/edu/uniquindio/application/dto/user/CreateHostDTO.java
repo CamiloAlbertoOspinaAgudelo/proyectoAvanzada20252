@@ -20,6 +20,6 @@ public record CreateHostDTO(
         @NotNull @Past LocalDate dateBirth,
         @NotNull Rol rol,
         @NotBlank @Length(max = 300) String description,
-        @Length(max = 200) List<String> documents
+        List<String> documents
 ) {
 }

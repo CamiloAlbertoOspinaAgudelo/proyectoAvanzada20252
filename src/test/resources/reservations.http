@@ -1,1 +1,25 @@
 GET http://localhost:8080/api/accommodations/1/metrics?to=2023-10-10
+
+###exito crear
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "accommodationId": 1,
+  "dateFrom": "2026-04-04T00:00:00",
+  "dateTo": "2026-05-05T00:00:00",
+  "guests": 2
+}
+
+###error crear
+POST http://localhost:8080/api/reservations
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "accommodationId": 1,
+  "dateFrom": "2026-06-06T00:00:00",
+  "dateTo": "2026-05-05T00:00:00",
+  "guests": 2
+}

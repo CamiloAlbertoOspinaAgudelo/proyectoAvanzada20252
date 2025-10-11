@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 public record CreateReviewDTO(
         @NotNull Long placeId,
         @NotNull @Min (1) @Max(5) int rating,
-        @NotBlank @Length(max = 300) String comment,
-        LocalDateTime createdAt
+        @NotBlank @Length(max = 300) String comment
 ) {
 }

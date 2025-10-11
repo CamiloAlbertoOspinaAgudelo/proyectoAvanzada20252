@@ -7,6 +7,7 @@ import co.edu.uniquindio.application.exceptions.BadRequestException;
 import co.edu.uniquindio.application.exceptions.NotFoundException;
 import co.edu.uniquindio.application.exceptions.ValueConflictException;
 import co.edu.uniquindio.application.mappers.ReserveMapper;
+import co.edu.uniquindio.application.model.entity.Accommodation;
 import co.edu.uniquindio.application.model.entity.Reservation;
 import co.edu.uniquindio.application.model.entity.User;
 import co.edu.uniquindio.application.model.enums.ReserveStatus;
@@ -40,21 +41,25 @@ public class ReserveServiceImpl implements ReserveService {
     @Override
     public void create(CreateReserveDTO reserveDTO) throws Exception{
         User user = userService.getAuthenticatedUser();
-        Reservation newReserve = reserveMapper.toEntity(reserveDTO);
 
-        if (newReserve.getDateFrom().isBefore(newReserve.getDateTo()) | newReserve.getDateFrom().isBefore(LocalDateTime.now())) {
+        if (reserveDTO.dateTo().isBefore(reserveDTO.dateFrom()) || reserveDTO.dateFrom().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("La fecha no es valida");
         }
 
-        if (reserveRepository.existsOverlappingReserve(reserveDTO.accomodationId(), reserveDTO.checkIn(), reserveDTO.checkOut())){
+        if (reserveRepository.existsOverlappingReserve(reserveDTO.accommodationId(), reserveDTO.dateFrom(), reserveDTO.dateTo())){
             throw new ValueConflictException("El alojamiento esta ocupado en la fecha seleccionada");
         }
 
-        if (accommodationRepository.findById(reserveDTO.accomodationId()).isEmpty()){
+        if (accommodationRepository.findById(reserveDTO.accommodationId()).isEmpty()){
             throw new NotFoundException("El alojamiento no existe");
         }
 
+        Accommodation accommodation = accommodationRepository.findById(reserveDTO.accommodationId()).orElseThrow(() -> new NotFoundException("El alojamiento no existe"));
+
+        Reservation newReserve = reserveMapper.toEntity(reserveDTO);
+
         newReserve.setUser(user);
+        newReserve.setAccommodation(accommodation);
         reserveRepository.save(newReserve);
     }
 
@@ -84,6 +89,7 @@ public class ReserveServiceImpl implements ReserveService {
         }
         Reservation reservation = reservationOptional.get();
         reservation.setStatus(ReserveStatus.CANCELLED);
+        reserveRepository.save(reservation);
     }
 
     @Override

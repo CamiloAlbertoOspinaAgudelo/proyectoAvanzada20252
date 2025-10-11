@@ -3,6 +3,7 @@ package co.edu.uniquindio.application.service.impls;
 import co.edu.uniquindio.application.dto.EmailDTO;
 import co.edu.uniquindio.application.dto.auth.RecoverDTO;
 import co.edu.uniquindio.application.dto.auth.ResetDTO;
+import co.edu.uniquindio.application.exceptions.BadRequestException;
 import co.edu.uniquindio.application.exceptions.ForbiddenException;
 import co.edu.uniquindio.application.exceptions.NotFoundException;
 import co.edu.uniquindio.application.exceptions.ValueConflictException;
@@ -36,7 +37,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         User user = userRepository.findByEmail(recoverDTO.email()).orElseThrow( () -> new NotFoundException("No existe el usuario") );
 
         if (!recoverDTO.email().equals(user.getEmail())) {
-            throw new  ForbiddenException("Usuario no encontrado");
+            throw new NotFoundException("Usuario no encontrado");
         }
 
         String code = generateCode();
@@ -75,11 +76,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             throw new ForbiddenException("El codigo ya venció");
         }
 
-        if (resetDTO.password().length() < 8){
-            throw new ValueConflictException("La contraseña debe tener al menos 8 caracteres");
-        }
-
-        if (resetDTO.password().equals(user.getPassword())){
+        if (passwordEncoder.matches(resetDTO.password(), user.getPassword())){
             throw new ValueConflictException("La contraseña no puede ser la misma a la anterior");
         }
 

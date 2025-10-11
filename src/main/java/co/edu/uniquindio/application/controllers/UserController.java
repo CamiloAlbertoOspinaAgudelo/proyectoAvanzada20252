@@ -43,7 +43,7 @@ public class UserController {
     @PutMapping("/{id}/password")
     public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordDTO passwordDTO) throws Exception{
         userService.changePassword(id, passwordDTO);
-        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
+        return ResponseEntity.ok(new ResponseDTO<>(false, "La contraseña ha sido actualizada"));
     }
 
 }

@@ -10,7 +10,6 @@ import java.util.Optional;
 @Repository
 public interface HostRepository extends JpaRepository<HostProfile,Long> {
     Optional<HostProfile> findByUserId(Long userId);
-    Optional<HostProfile> findByUser_Email(String email);
 
     @Query("select a.host from Accommodation a where a.id = :id ")
     HostProfile findByAccommodation_Id(Long id);

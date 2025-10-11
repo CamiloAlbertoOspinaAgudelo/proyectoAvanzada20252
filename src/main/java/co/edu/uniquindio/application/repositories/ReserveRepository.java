@@ -24,13 +24,13 @@ public interface ReserveRepository extends JpaRepository<Reservation, Long> {
     @Query("select r from Reservation r where r.accommodation.host.id = :id " +
             "and (:city is null or r.accommodation.address.city = :city)" +
             "and (:status is null or :status = r.status)" +
-            "and (:checkIn is null or :checIn = r.dateFrom)" +
-            "and (:checkOut is null or :checOut = r.dateTo)")
+            "and (:checkIn is null or :checkIn = r.dateFrom)" +
+            "and (:checkOut is null or :checkOut = r.dateTo)")
     Page<Reservation> findAllByAccommodation_Host_Id(Long id, String city, ReserveStatus status, LocalDateTime checkIn, LocalDateTime checkOut, Pageable pageable);
 
     List<Reservation> findAllByStatus(@Param("status")ReserveStatus status);
 
-    @Query("select SIZE(r.accommodation.reservations), r.accommodation.avgRating, r.accommodation.totalRatings from Reservation r where r.accommodation.id = :id " +
+    @Query("select new co.edu.uniquindio.application.dto.accommodation.MetricsDTO(count(r.accommodation.id), r.accommodation.avgRating, r.accommodation.totalRatings) from Reservation r where r.accommodation.id = :id " +
             "and (:startDate is null or r.dateFrom >= :startDate ) " +
             "and (:endDate is null or r.dateTo <= :endDate )")
     MetricsDTO getMetrics(Long id, LocalDateTime startDate, LocalDateTime endDate);

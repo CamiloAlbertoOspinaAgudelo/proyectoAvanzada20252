@@ -1,0 +1,10 @@
+###exito create
+POST http://localhost:8080/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "placeId": 2,
+  "comment": "Muy grande",
+  "rating": 4
+}

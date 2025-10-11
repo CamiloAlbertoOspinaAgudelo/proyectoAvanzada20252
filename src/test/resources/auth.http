@@ -1,41 +1,66 @@
+### register
 POST  http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "name": "pepito",
-  "email": "pepito@gmail.com",
+  "name": "carlitos",
+  "email": "carlitos@email.com",
   "password": "12345678",
   "dateBirth": "2000-02-02",
   "rol": "USER"
 }
 
-### error
+### exito login
 POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "juanito@gmail.com",
-  "password": "111"
-}
-
-### exito
-POST http://localhost:8080/api/auth/login
-Content-Type: application/json
-
-{
-  "email": "juanito@gmail.com",
+  "email": "juan@email.com",
   "password": "12345678"
 }
 > {% client.global.set("auth_token", response.body.msg.token); %}
 
-###
-PUT http://localhost:8080/api/users/1
+### error login
+POST http://localhost:8080/api/auth/login
 Content-Type: application/json
-Authorization: Bearer {{auth_token}}
 
 {
-  "name": "Carlos",
-  "phone": "333333",
-  "photoUrl": "mi foto",
-  "dateBirth": "2000-08-22"
+  "email": "juanito@email.com",
+  "password": "111"
+}
+
+###exito recover
+POST http://localhost:8080/api/auth/recover
+Content-Type: application/json
+
+{
+  "email": "carlitos@email.com"
+}
+
+### error recover
+POST http://localhost:8080/api/auth/recover
+Content-Type: application/json
+
+{
+  "email": "carlitosemail.com"
+}
+
+###exito reset
+POST http://localhost:8080/api/auth/reset
+Content-Type: application/json
+
+{
+  "email": "carlitos@email.com",
+  "code": "1ACM75EB",
+  "password": "12345678"
+}
+
+###error reset
+POST http://localhost:8080/api/auth/reset
+Content-Type: application/json
+
+{
+  "email": "carlitos@email.com",
+  "code": "1ACM75EB",
+  "password": "1234"
 }

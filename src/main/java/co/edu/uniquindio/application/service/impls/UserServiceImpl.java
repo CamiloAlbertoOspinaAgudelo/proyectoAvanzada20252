@@ -61,10 +61,11 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para borrar este usuario.");
         }
 
-        userRepository.delete(user);
+        user.setStatus(Status.INACTIVE);
+        userRepository.save(user);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UserServiceImpl implements UserService {
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
-            throw new UnauthorizedException("No tienes permiso para ver este usuario.");
+            throw new UnauthorizedException("No tienes permiso para editar este usuario.");
         }
 
         if (userDTO.name().isEmpty()){
@@ -100,7 +101,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // Verificar que la nueva contraseña no sea igual a la anterior
-        if (passwordEncoder.matches(passwordDTO.oldPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(passwordDTO.newPassword(), user.getPassword())) {
             throw new UnauthorizedException("La nueva contraseña no puede ser igual a la anterior.");
         }
 

@@ -42,7 +42,7 @@ public interface AccommodationRepository  extends JpaRepository<Accommodation, L
            )
       )
 """)
-    Page<Accommodation> findAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, Double priceMin, Double priceOut, List<Service> services, Pageable pageable);
+    Page<Accommodation> findAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, Double priceMin, Double priceMax, List<Service> services, Pageable pageable);
 
     Page<Accommodation> findByHost_Id(Long hostId, Pageable pageable);
 

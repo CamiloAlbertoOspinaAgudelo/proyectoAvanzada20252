@@ -12,6 +12,6 @@ public record EditHostDTO(
         LocalDate dateBirth,
         @Length(max = 300) String photoUrl,
         @Length(max = 300) String description,
-        @Length(max = 200) List<String> documents
+        List<String> documents
 ) {
 }

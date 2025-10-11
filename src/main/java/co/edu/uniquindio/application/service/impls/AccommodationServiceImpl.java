@@ -83,6 +83,8 @@ public class AccommodationServiceImpl implements AccommodationService {
         place.setPriceNight(accommodationDTO.priceNight());
         place.setCapMax(accommodationDTO.capMax());
         place.setServices(accommodationDTO.services());
+
+        accommodationRepository.save(place);
     }
 
     @Override
@@ -101,10 +103,11 @@ public class AccommodationServiceImpl implements AccommodationService {
         Accommodation place = placeOpt.get();
 
         place.setStatus(Status.INACTIVE);
+        accommodationRepository.save(place);
     }
 
     @Override
-    public List<AccommodationDTO> listAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, double priceMin, double priceMax, List<co.edu.uniquindio.application.model.enums.Service> services, int page){
+    public List<AccommodationDTO> listAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, Double priceMin, Double priceMax, List<co.edu.uniquindio.application.model.enums.Service> services, int page){
 
         Pageable pageable = PageRequest.of(page, 10);
         Page<Accommodation> list = accommodationRepository.findAll(city, dateIn, dateOut, priceMin, priceMax, services, pageable);

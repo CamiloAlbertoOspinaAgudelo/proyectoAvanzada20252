@@ -21,7 +21,7 @@ public interface AccommodationService {
     AccommodationDTO get(Long id) throws  Exception;
     void update(Long id, EditAccommodationDTO accommodationDTO) throws  Exception;
     void delete(Long id) throws  Exception;
-    List<AccommodationDTO> listAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, double priceMin, double priceMax, List<Service> services, int page);
+    List<AccommodationDTO> listAll(String city, LocalDateTime dateIn, LocalDateTime dateOut, Double priceMin, Double priceMax, List<Service> services, int page);
     MetricsDTO getMetrics(Long id, LocalDateTime from, LocalDateTime to) throws Exception;
     List<ReviewDTO> getReviews(Long id, int page) throws Exception;
     List<ReserveDTO> getReserves(Long id, LocalDateTime from, LocalDateTime to, ReserveStatus status, int page) throws Exception;

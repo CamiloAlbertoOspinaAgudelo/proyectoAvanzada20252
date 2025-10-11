@@ -6,6 +6,7 @@ import co.edu.uniquindio.application.model.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class Accommodation {
     @ElementCollection
     private Set<Service> services;
 
-    @Column(nullable = false)
+    @Enumerated
     private Status status;
 
     @ElementCollection
@@ -53,5 +54,7 @@ public class Accommodation {
 
     @Column(nullable = false)
     private double avgRating;
+    @Column(nullable = false)
+    private LocalDateTime createdAt;
 
 }

@@ -6,9 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record CreateReserveDTO(
-        @NotNull Long accomodationId,
-        @NotNull LocalDateTime checkIn,
-        @NotNull LocalDateTime checkOut,
+        @NotNull Long accommodationId,
+        @NotNull LocalDateTime dateFrom,
+        @NotNull LocalDateTime dateTo,
         @NotNull int guests
         ) {
 }

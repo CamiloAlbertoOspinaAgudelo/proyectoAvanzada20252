@@ -1,36 +1,55 @@
-### Obtener todos los usuarios
-GET http://localhost:8080/api/users
-
-### Obtener un usuario por id (cambie 1 por el id del usuario que desea obtener)
-GET http://localhost:8080/api/users/1
-
-### Crear un usuario
-POST http://localhost:8080/api/users
-Content-Type: application/json
-
-{
-  "name": "Carlos",
-  "phone": "121212",
-  "email": "carlos@email.com",
-  "password": "12345678",
-  "photoUrl": "",
-  "dateBirth": "2000-08-22",
-  "role": "USER"
-}
-
-### Actualizar un usuario (cambie 1 por el id del usuario que desea actualizar)
-PUT http://localhost:8080/api/users/1
+### exito editUser
+PUT http://localhost:8080/api/users/3
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
-
 
 {
   "name": "Carlos",
   "phone": "333333",
   "photoUrl": "mi foto",
-  "dateBirth": "2000-08-22",
-  "role": "USER"
+  "dateBirth": "2000-08-22"
 }
 
-### Eliminar un usuario (cambie 1 por el id del usuario que desea eliminar)
+### error editUser
+PUT http://localhost:8080/api/users/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "Carlos",
+  "phone": "333333",
+  "photoUrl": "mi foto",
+  "dateBirth": "2000-08-22"
+}
+
+### deleteUser
 DELETE http://localhost:8080/api/users/1
+Authorization: Bearer {{auth_token}}
+
+### exito getUser
+GET http://localhost:8080/api/users/3
+Authorization: Bearer {{auth_token}}
+
+### error getUser
+GET http://localhost:8080/api/users/1
+Authorization: Bearer {{auth_token}}
+
+### exito changePassword
+PUT http://localhost:8080/api/users/3/password
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "oldPassword": "12345678",
+  "newPassword": "24688642"
+}
+
+### error changePassword
+PUT http://localhost:8080/api/users/3/password
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "oldPassword": "24688642",
+  "newPassword": "12345678"
+}

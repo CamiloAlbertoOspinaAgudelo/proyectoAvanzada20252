@@ -1,3 +1,4 @@
+### exito createPlace
 POST http://localhost:8080/api/accommodations
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
@@ -17,3 +18,85 @@ Authorization: Bearer {{auth_token}}
   "capMax": 4,
   "services": ["WIFI"]
 }
+
+### error createPlace
+POST http://localhost:8080/api/accommodations
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "Casa",
+  "description": "Hola",
+  "address": {
+    "city": "Armenia",
+    "direction": "Carrera 15",
+    "location": {
+      "lat": 123,
+      "lng": 123
+    }
+  },
+  "priceNight": 120000.00,
+  "capMax": 0,
+  "services": ["WIFI"]
+}
+
+### exito listAll
+GET http://localhost:8080/api/accommodations?page=0
+
+### exito detalle
+GET http://localhost:8080/api/accommodations/1
+Authorization: Bearer {{auth_token}}
+
+###exito edit
+PUT http://localhost:8080/api/accommodations/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "uni",
+  "description": "Aca se estudia",
+  "address": {
+    "city": "Armenia",
+    "direction": "la 15",
+    "location": {
+      "lng": 1234,
+      "lat": 4321
+    }
+  },
+  "priceNight": 50000,
+  "capMax": 10,
+  "services": ["WIFI","AIR_CONDITIONING","PARKING","POOL"],
+}
+
+###error edit
+PUT http://localhost:8080/api/accommodations/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "title": "uni",
+  "description": "Aca se estudia",
+  "address": {
+    "city": "Armenia",
+    "direction": "la 15",
+    "location": {
+      "lng": 1234,
+      "lat": 4321
+    }
+  },
+  "priceNight": 0,
+  "capMax": 0,
+  "services": ["WIFI","AIR_CONDITIONING","PARKING","POOL"]
+}
+
+###exito delete
+DELETE http://localhost:8080/api/accommodations/1
+Authorization: Bearer {{auth_token}}
+
+###exito metricas
+GET http://localhost:8080/api/accommodations/2/metrics
+Authorization: Bearer {{auth_token}}
+
+###
+GET http://localhost:8080/api/accommodations/2/reviews
+Authorization: Bearer {{auth_token}}

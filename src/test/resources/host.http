@@ -1,0 +1,68 @@
+### exito createHost
+POST http://localhost:8080/api/host
+Content-Type: application/json
+
+{
+  "name": "carlos",
+  "email": "carlos@email.com",
+  "password": "12345678",
+  "dateBirth": "2000-02-02",
+  "rol": "HOST",
+  "description": "El profe"
+}
+
+### error createHost
+POST http://localhost:8080/api/host
+Content-Type: application/json
+
+{
+  "name": "carlos",
+  "email": "carlitos@email.com",
+  "password": "12345678",
+  "dateBirth": "2000-02-02",
+  "rol": "HOST",
+  "description": "El casi profe"
+}
+
+### exito get
+GET http://localhost:8080/api/host/1
+Authorization: Bearer {{auth_token}}
+
+###error get
+GET http://localhost:8080/api/host/6
+Authorization: Bearer {{auth_token}}
+
+###exito edit
+PUT http://localhost:8080/api/host/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "name": "camilo",
+  "phone": "1234567890",
+  "description": "El estudiante",
+  "dateBirth": "2000-02-02"
+}
+
+###error edit
+PUT http://localhost:8080/api/host/1
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "phone": "1234567890",
+  "description": "El estudiante",
+  "dateBirth": "2000-02-02"
+}
+
+###exito delete
+DELETE http://localhost:8080/api/host/1
+Authorization: Bearer {{auth_token}}
+
+###exito getPlaces
+GET http://localhost:8080/api/host/1/accommodations?page=0
+Authorization: Bearer {{auth_token}}
+
+###exito getReserves
+GET http://localhost:8080/api/host/1/accomodations/reserves?page=0
+Authorization: Bearer {{auth_token}}
