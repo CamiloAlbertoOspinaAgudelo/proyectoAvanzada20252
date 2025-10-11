@@ -1,6 +1,7 @@
 package co.edu.uniquindio.application.service.interfaces;
 
 import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
+import co.edu.uniquindio.application.dto.user.ChangePasswordDTO;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
@@ -14,7 +15,7 @@ public interface UserService {
     UserDTO get(Long id) throws Exception;
     void delete(Long id) throws Exception;
     void update(Long id, EditUserDTO userDTO) throws Exception;
-    void changePassword(Long id, String oldPassword, String newPassword) throws Exception;
+    void changePassword(Long id, ChangePasswordDTO passwordDTO) throws Exception;
     User getAuthenticatedUser() throws Exception;
 
 }

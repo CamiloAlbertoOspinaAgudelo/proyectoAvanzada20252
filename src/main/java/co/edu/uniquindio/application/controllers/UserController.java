@@ -3,10 +3,7 @@ package co.edu.uniquindio.application.controllers;
 import co.edu.uniquindio.application.dto.accommodation.AccommodationDTO;
 import co.edu.uniquindio.application.dto.booking.ReserveDTO;
 import co.edu.uniquindio.application.dto.exception.ResponseDTO;
-import co.edu.uniquindio.application.dto.user.CreateHostDTO;
-import co.edu.uniquindio.application.dto.user.EditUserDTO;
-import co.edu.uniquindio.application.dto.user.HostDTO;
-import co.edu.uniquindio.application.dto.user.UserDTO;
+import co.edu.uniquindio.application.dto.user.*;
 import co.edu.uniquindio.application.service.interfaces.HostService;
 import co.edu.uniquindio.application.service.interfaces.UserService;
 import jakarta.validation.Valid;
@@ -41,6 +38,12 @@ public class UserController {
     public ResponseEntity<ResponseDTO<UserDTO>> get(@PathVariable Long id) throws Exception{
         UserDTO userDTO = userService.get(id);
         return ResponseEntity.ok(new ResponseDTO<>(false, userDTO));
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<ResponseDTO<String>> changePassword(@PathVariable Long id, @Valid @RequestBody ChangePasswordDTO passwordDTO) throws Exception{
+        userService.changePassword(id, passwordDTO);
+        return ResponseEntity.ok(new ResponseDTO<>(false, "El usuario ha sido actualizado"));
     }
 
 }

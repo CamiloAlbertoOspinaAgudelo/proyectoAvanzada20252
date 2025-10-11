@@ -79,6 +79,10 @@ public class PasswordResetServiceImpl implements PasswordResetService {
             throw new ValueConflictException("La contraseña debe tener al menos 8 caracteres");
         }
 
+        if (resetDTO.password().equals(user.getPassword())){
+            throw new ValueConflictException("La contraseña no puede ser la misma a la anterior");
+        }
+
         user.setPassword( passwordEncoder.encode( resetDTO.password() ) );
         userRepository.save(user);
 

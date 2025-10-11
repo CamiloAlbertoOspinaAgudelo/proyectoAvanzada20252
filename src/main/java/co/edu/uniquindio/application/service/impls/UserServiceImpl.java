@@ -1,5 +1,6 @@
 package co.edu.uniquindio.application.service.impls;
 
+import co.edu.uniquindio.application.dto.user.ChangePasswordDTO;
 import co.edu.uniquindio.application.dto.user.CreateUserDTO;
 import co.edu.uniquindio.application.dto.user.EditUserDTO;
 import co.edu.uniquindio.application.dto.user.UserDTO;
@@ -87,23 +88,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void changePassword(Long id, String oldPassword, String newPassword) throws Exception{
+    public void changePassword(Long id, ChangePasswordDTO passwordDTO) throws Exception{
         User user = getAuthenticatedUser();
 
         if (!id.equals(user.getId())) {
             throw new UnauthorizedException("No tienes permiso para ver este usuario.");
         }
 
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
+        if (!passwordEncoder.matches(passwordDTO.oldPassword(), user.getPassword())) {
             throw new ValueConflictException("La contraseña no es correcta.");
         }
 
         // Verificar que la nueva contraseña no sea igual a la anterior
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
+        if (passwordEncoder.matches(passwordDTO.oldPassword(), user.getPassword())) {
             throw new UnauthorizedException("La nueva contraseña no puede ser igual a la anterior.");
         }
 
-        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setPassword(passwordEncoder.encode(passwordDTO.newPassword()));
         userRepository.save(user);
     }
 

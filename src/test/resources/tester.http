@@ -28,12 +28,22 @@ Content-Type: application/json
 }
 > {% client.global.set("auth_token", response.body.msg.token); %}
 
-### exito
+###
 POST http://localhost:8080/api/auth/recover
 Content-Type: application/json
 
 {
   "email": "carlitos@gmail.com"
+}
+
+###
+POST http://localhost:8080/api/auth/reset
+Content-Type: application/json
+
+{
+  "email": "carlitos@gmail.com",
+  "code": "NSFK26K7",
+  "password": "12345678"
 }
 
 ### exito
