@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 
 public record ReserveDTO(
         Long id,
-        LocalDateTime checkIn,
-        LocalDateTime checkOut,
+        LocalDateTime dateFrom,
+        LocalDateTime dateTo,
         int guests,
         ReserveStatus status
         ) {

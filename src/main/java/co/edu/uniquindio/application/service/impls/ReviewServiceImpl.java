@@ -45,10 +45,11 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NotFoundException("El alojamiento no existe");
         }
 
-        Review review = new Review();
+        Review review = reviewMapper.toEntity(reviewDTO);
         review.setAccommodation(place.get());
-        review.setRating(reviewDTO.rating());
-        review.setComment(reviewDTO.comment());
+        review.setUser(user);
+        review.setReservation(reservation);
+
         reviewRepository.save(review);
 
         //Cada que se crea una reseña nueva, se actualiza las métricas del alojamiento
@@ -73,10 +74,11 @@ public class ReviewServiceImpl implements ReviewService {
 
         Review review = reviewOptional.get();
 
-        if (review.getAccommodation().getHost().getId().equals(host.getId())){
+        if (!review.getAccommodation().getHost().getId().equals(host.getId())){
             throw new UnauthorizedException("Usted no es el host");
         }
 
         review.setResponse(reviewDTO.response());
+        reviewRepository.save(review);
     }
 }

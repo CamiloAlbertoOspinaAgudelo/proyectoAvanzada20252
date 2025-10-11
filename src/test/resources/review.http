@@ -8,3 +8,25 @@ Authorization: Bearer {{auth_token}}
   "comment": "Muy grande",
   "rating": 4
 }
+
+###error create
+POST http://localhost:8080/api/reviews
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "placeId": 3,
+  "comment": "Muy grande",
+  "rating": 4
+}
+
+###exito response
+POST http://localhost:8080/api/reviews/1/response
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "rating": 4,
+  "comment": "Muy grande",
+  "response": "Verda que si"
+}

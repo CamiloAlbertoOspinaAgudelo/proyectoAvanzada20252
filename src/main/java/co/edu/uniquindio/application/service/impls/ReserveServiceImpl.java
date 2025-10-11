@@ -64,9 +64,9 @@ public class ReserveServiceImpl implements ReserveService {
     }
 
     @Override
-    public List<ReserveDTO> listAll() throws Exception{
+    public List<ReserveDTO> listAll(int page) throws Exception{
         User user = userService.getAuthenticatedUser();
-        Pageable pageable = PageRequest.of(0, 10);
+        Pageable pageable = PageRequest.of(page, 10);
         return reserveRepository.findAllByUser_Id(user.getId(), pageable).stream().map(reserveMapper::toReserveDTO).toList();
     }
 

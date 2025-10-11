@@ -97,6 +97,10 @@ Authorization: Bearer {{auth_token}}
 GET http://localhost:8080/api/accommodations/2/metrics
 Authorization: Bearer {{auth_token}}
 
-###
-GET http://localhost:8080/api/accommodations/2/reviews
+###exito reviews
+GET http://localhost:8080/api/accommodations/2/reviews?page=0
+Authorization: Bearer {{auth_token}}
+
+###exito reservas
+GET http://localhost:8080/api/accommodations/2/reseves?page=0
 Authorization: Bearer {{auth_token}}

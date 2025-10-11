@@ -51,5 +51,5 @@ Authorization: Bearer {{auth_token}}
 
 {
   "oldPassword": "24688642",
-  "newPassword": "12345678"
+  "newPassword": "24688642"
 }

@@ -33,10 +33,10 @@ public class ReservationsController {
     //obtener reservas de usuario
     @GetMapping
     public ResponseEntity<ResponseDTO<List<ReserveDTO>>> listAll(
-            @RequestParam int page, @RequestParam int size, @RequestParam(required = false) String priceNight,
+            @RequestParam int page, @RequestParam(required = false) String priceNight,
             @RequestParam(required = false) String city, @RequestParam(required = false) ReserveStatus status,
             @RequestParam(required = false) LocalDateTime checkIn, @RequestParam(required = false) LocalDateTime checkOut) throws Exception {
-        return ResponseEntity.ok(new ResponseDTO<>(false, reserveService.listAll()));
+        return ResponseEntity.ok(new ResponseDTO<>(false, reserveService.listAll(page)));
     }
 
     //obtener detalle reserva
