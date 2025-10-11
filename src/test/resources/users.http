@@ -1,5 +1,5 @@
 ### exito editUser
-PUT http://localhost:8080/api/users/3
+PUT http://localhost:8080/api/users/4
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
@@ -23,11 +23,11 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### deleteUser
-DELETE http://localhost:8080/api/users/1
+DELETE http://localhost:8080/api/users/4
 Authorization: Bearer {{auth_token}}
 
 ### exito getUser
-GET http://localhost:8080/api/users/3
+GET http://localhost:8080/api/users/4
 Authorization: Bearer {{auth_token}}
 
 ### error getUser
@@ -35,7 +35,7 @@ GET http://localhost:8080/api/users/1
 Authorization: Bearer {{auth_token}}
 
 ### exito changePassword
-PUT http://localhost:8080/api/users/3/password
+PUT http://localhost:8080/api/users/4/password
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
@@ -45,7 +45,7 @@ Authorization: Bearer {{auth_token}}
 }
 
 ### error changePassword
-PUT http://localhost:8080/api/users/3/password
+PUT http://localhost:8080/api/users/4/password
 Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 

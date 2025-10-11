@@ -15,7 +15,7 @@ Content-Type: application/json
 Authorization: Bearer {{auth_token}}
 
 {
-  "placeId": 3,
+  "placeId": 2,
   "comment": "Muy grande",
   "rating": 4
 }

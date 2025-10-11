@@ -13,5 +13,14 @@ import org.mapstruct.MappingConstants;
 public interface HostMapper {
     HostProfile toEntity(CreateHostDTO hostDTO);
 
+    @Mapping(source = "user.id", target = "id")
+    @Mapping(source = "user.name", target = "name")
+    @Mapping(source = "user.email", target = "email")
+    @Mapping(source = "user.rol", target = "rol")
+    @Mapping(source = "user.phone", target = "phone")
+    @Mapping(source = "user.dateBirth", target = "dateBirth")
+    @Mapping(source = "user.photoUrl", target = "photoUrl")
+    @Mapping(source = "description", target = "description")
+    @Mapping(source = "documents", target = "documents")
     HostDTO toHostDTO(HostProfile host);
 }

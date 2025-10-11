@@ -82,6 +82,7 @@ public class HostServiceImpl implements HostService {
         User user = userService.getAuthenticatedUser();
         HostProfile host = hostRepository.findByUserId(user.getId()).orElseThrow(() -> new UnauthorizedException("Usted no es un host"));
 
+
         return hostMapper.toHostDTO(host);
     }
 

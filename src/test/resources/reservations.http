@@ -7,8 +7,8 @@ Authorization: Bearer {{auth_token}}
 
 {
   "accommodationId": 2,
-  "dateFrom": "2026-04-04T00:00:00",
-  "dateTo": "2026-05-05T00:00:00",
+  "dateFrom": "2027-04-04T00:00:00",
+  "dateTo": "2027-05-05T00:00:00",
   "guests": 2
 }
 
@@ -29,9 +29,9 @@ GET  http://localhost:8080/api/reservations?page=0
 Authorization: Bearer {{auth_token}}
 
 ###exito detalle
-GET  http://localhost:8080/api/reservations/1
+GET  http://localhost:8080/api/reservations/2
 Authorization: Bearer {{auth_token}}
 
 ###exito cancel
-PATCH http://localhost:8080/api/reservations/1/status
+PATCH http://localhost:8080/api/reservations/4/status
 Authorization: Bearer {{auth_token}}

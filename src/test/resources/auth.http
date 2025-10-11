@@ -3,8 +3,8 @@ POST  http://localhost:8080/api/auth/register
 Content-Type: application/json
 
 {
-  "name": "carlitos",
-  "email": "carlitos@email.com",
+  "name": "camilo",
+  "email": "camilo@email.com",
   "password": "12345678",
   "dateBirth": "2000-02-02",
   "rol": "USER"
@@ -15,7 +15,7 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "juan@email.com",
+  "email": "carlitos@email.com",
   "password": "12345678"
 }
 > {% client.global.set("auth_token", response.body.msg.token); %}
@@ -51,7 +51,7 @@ Content-Type: application/json
 
 {
   "email": "carlitos@email.com",
-  "code": "1ACM75EB",
+  "code": "EDY3Z6WK",
   "password": "12345678"
 }
 
@@ -61,6 +61,6 @@ Content-Type: application/json
 
 {
   "email": "carlitos@email.com",
-  "code": "1ACM75EB",
+  "code": "GOCTMZ41",
   "password": "1234"
 }
