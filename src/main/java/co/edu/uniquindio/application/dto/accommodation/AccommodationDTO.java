@@ -10,7 +10,7 @@ public record AccommodationDTO(
         String title,
         String description,
         AddressDTO address,
-        String PriceNight,
+        String priceNight,
         int capMax,
         Set<Service> services,
         List<String> photoUrls,
