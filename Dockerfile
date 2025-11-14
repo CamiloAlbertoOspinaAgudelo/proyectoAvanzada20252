@@ -11,7 +11,7 @@ COPY --chown=gradle:gradle gradle gradle
 RUN gradle --no-daemon build -x test || return 0
 
 # Copiar el resto del código fuente
-COPY --chown=gradle:gradle src/main/java/co/edu/uniquindio/application .
+COPY --chown=gradle:gradle src ./src
 
 # Construir el archivo JAR
 RUN gradle --no-daemon bootJar
